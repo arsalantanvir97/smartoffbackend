@@ -7,6 +7,7 @@ const createResetToken = async (email, code) => {
       email,
       code,
     });
+    console.log('newToken',newToken)
     await newToken.save();
   };
   const verifyPassword = async (password_to_comapre, password_base) =>
