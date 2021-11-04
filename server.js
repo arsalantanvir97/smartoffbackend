@@ -10,6 +10,10 @@ import { fileFilter, fileStorage } from "./multer";
 
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import vendorRoutes from "./routes/vendorRoutes.js";
+import feedbackRoutes from "./routes/feedbackRoutes";
+import RequestMachineRoutes from "./routes/requestmachine";
+import AdManagementRoutes from "./routes/adManagementRoutes";
 
 dotenv.config();
 
@@ -29,11 +33,22 @@ app.use(
       name: "user_image",
       maxCount: 1,
     },
+    {
+      name: "ad_video",
+      maxCount: 1,
+    },
   ])
 );
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/vendor", vendorRoutes);
+app.use("/api/feedback", feedbackRoutes);
+app.use("/api/requestmachine", RequestMachineRoutes);
+app.use("/api/admanagement", AdManagementRoutes);
+
+
+
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(__dirname + "/uploads"));

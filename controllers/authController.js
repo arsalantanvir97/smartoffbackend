@@ -3,6 +3,7 @@ import asyncHandler from "express-async-handler";
 import Admin from "../models/AdminModel.js";
 import Reset from "../models/ResetModel.js";
 import User from "../models/UserModel.js";
+import Vendor from "../models/VendorModel.js";
 
 import generateToken from "../utills/generateJWTtoken.js";
 import generateEmail from "../services/generate_email.js";
@@ -201,6 +202,43 @@ console.log('user',user)
     throw new Error("Invalid user data");
   }
 })
+const registerVendor = asyncHandler(async (req, res) => {
+  const { firstName, lastName, email, password,address,printerLocation,phone } = req.body;
+
+  const VendorExists = await Vendor.findOne({ email });
+
+  if (VendorExists) {
+    res.status(400);
+    throw new Error("vendor already exists");
+  }
+
+  const vendor = await Vendor.create({
+    firstName,
+    lastName,
+    email,
+    password,
+    address,
+    printerLocation,
+    phone,
+  });
+console.log('vendor',vendor)
+  if (vendor) {
+    res.status(201).json({
+      _id: vendor._id,
+      firstName: vendor.firstName,
+      lastName: vendor.lastName,
+      email: vendor.email,
+      address:vendor.address,
+      printerLocation:vendor.printerLocation,
+      phone:vendor.phone,
+
+      token: generateToken(vendor._id),
+    });
+  } else {
+    res.status(400);
+    throw new Error("Invalid vendor data");
+  }
+})
 
 
 export {
@@ -211,4 +249,5 @@ export {
   resetPassword,
   editProfile,
   registerUser,
+  registerVendor
 };

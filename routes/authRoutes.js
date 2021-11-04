@@ -7,7 +7,8 @@ import {
   verifyRecoverCode,
   resetPassword,
   editProfile,
-  registerUser
+  registerUser,
+  registerVendor
 } from "../controllers/authController.js";
 
 router.post("/adminRegister", registerAdmin);
@@ -17,5 +18,7 @@ router.post("/adminverifyRecoverCode", verifyRecoverCode);
 router.post("/adminresetPassword", resetPassword);
 router.post("/editProfile", editProfile);
 router.post("/registerUser", registerUser);
+router.post("/registerVendor", registerVendor);
+
 
 export default router;

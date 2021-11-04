@@ -12,8 +12,12 @@ export const fileStorage = multer.diskStorage({
 });
 
 export const fileFilter = (req, file, cb) => {
-  if (file.fieldname === "user_image") {
-    if (file.mimetype.includes("image/")) {
+  console.log("file", file);
+  if (file.fieldname === "user_image" || "ad_video") {
+    console.log("block1");
+    if (file.mimetype.includes("image/") || file.mimetype.includes("video/")) {
+      console.log("block2");
+
       cb(null, true);
     } else {
       cb(null, false);
