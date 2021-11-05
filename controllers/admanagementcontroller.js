@@ -87,7 +87,50 @@ req.files.ad_video[0].path;
       });
     }
   };
+  const setCostforAd = async (req, res) => {
+    console.log('req',req.body.cost,typeof(req.body.cost))
+    console.log('api hit1')
 
+    try {
+      console.log('api hit2')
+      const admanagement=await AdmanagementModel.updateMany({}, {$set:{"cost": Number(req.body.cost)}})
+      
+    } catch (err) {
+      res.status(500).json({
+        message: err.toString(),
+      });
+    }
+  };
+ const rejectAd = async (req, res) => {
+  const { id,rejectreason } = req.body;
 
-  export {createAdmanagement,Admanagementlogs,getAdmanagementDetails};
+    try {
+      const rejectad = await AdmanagementModel.findByIdAndUpdate({_id:id}, { rejectreason: rejectreason, status:'Rejected' }, { new: true, upsert: true }).exec();;
+
+      await res.status(201).json({
+        rejectad,
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: err.toString(),
+      });
+    }
+  };
+  const approveAd = async (req, res) => {
+    const { id } = req.body;
+  
+      try {
+        const approvead = await AdmanagementModel.findByIdAndUpdate({_id:id}, {  status:'Approved' }, { new: true, upsert: true }).exec();;
+  
+        await res.status(201).json({
+          approvead,
+        });
+      } catch (err) {
+        res.status(500).json({
+          message: err.toString(),
+        });
+      }
+    };
+
+  export {createAdmanagement,Admanagementlogs,getAdmanagementDetails,setCostforAd,rejectAd,approveAd};
 

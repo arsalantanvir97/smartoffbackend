@@ -14,6 +14,8 @@ import vendorRoutes from "./routes/vendorRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes";
 import RequestMachineRoutes from "./routes/requestmachine";
 import AdManagementRoutes from "./routes/adManagementRoutes";
+import SubscriptionRoutes from "./routes/subscriptionRoutes";
+import SettingRoutes from "./routes/settingRoutes";
 
 dotenv.config();
 
@@ -46,6 +48,9 @@ app.use("/api/vendor", vendorRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/requestmachine", RequestMachineRoutes);
 app.use("/api/admanagement", AdManagementRoutes);
+app.use("/api/subscription", SubscriptionRoutes);
+app.use("/api/settings", SettingRoutes);
+
 
 
 

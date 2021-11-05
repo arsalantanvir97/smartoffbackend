@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 const SubscriptionSchema = mongoose.Schema(
     {
       packagename: { type: String,},
-      duration: { type: String,},
-      amount: { type: Number, },
+      duration: { type: Date,},
+      amount: { type: Number || String, },
       Features: { type: Array, },
       status: { type: String, },
     },
