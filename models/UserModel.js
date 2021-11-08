@@ -19,6 +19,7 @@ const UserSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    totalPrints:{type:Number,default:0},
     userImage: { type: String },
     status: { type: Boolean, default: true },
   },

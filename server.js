@@ -16,6 +16,8 @@ import RequestMachineRoutes from "./routes/requestmachine";
 import AdManagementRoutes from "./routes/adManagementRoutes";
 import SubscriptionRoutes from "./routes/subscriptionRoutes";
 import SettingRoutes from "./routes/settingRoutes";
+import PrinterRoutes from "./routes/printerRoutes";
+import PrintRoutes from "./routes/printRoutes";
 
 dotenv.config();
 
@@ -50,10 +52,8 @@ app.use("/api/requestmachine", RequestMachineRoutes);
 app.use("/api/admanagement", AdManagementRoutes);
 app.use("/api/subscription", SubscriptionRoutes);
 app.use("/api/settings", SettingRoutes);
-
-
-
-
+app.use("/api/printer", PrinterRoutes);
+app.use("/api/print", PrintRoutes);
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(__dirname + "/uploads"));
