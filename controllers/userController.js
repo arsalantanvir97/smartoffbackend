@@ -131,12 +131,13 @@ const getCountofallCollection = async (req, res) => {
         },
       },
     ];
-    const [user, vendor, print, printer , total_cost, salesCount] =
+    const [user, vendor, print, printer, allprinter, total_cost, salesCount] =
       await Promise.all([
         User.count(),
         Vendor.count(),
         Print.count(),
         Printer.count(),
+        Printer.find(),
         Print.aggregate([
           {
             $group: {
@@ -162,6 +163,7 @@ const getCountofallCollection = async (req, res) => {
       vendor,
       print,
       printer,
+      allprinter,
       total_cost,
       graph_data: arr,
     });
