@@ -59,7 +59,7 @@ const authAdmin = asyncHandler(async (req, res) => {
       firstName: admin.firstName,
       lastName: admin.lastName,
       email: admin.email,
-      userImage:admin.userImage,
+      userImage: admin.userImage,
 
       token: generateToken(admin._id),
     });
@@ -74,7 +74,7 @@ const authAdmin = asyncHandler(async (req, res) => {
 const recoverPassword = asyncHandler(async (req, res) => {
   console.log("recoverPassword");
   const { email } = req.body;
-
+  console.log("req.body", req.body);
   const admin = await Admin.findOne({ email });
   if (!admin) {
     console.log("!admin");
@@ -96,54 +96,56 @@ const recoverPassword = asyncHandler(async (req, res) => {
     });
   }
 });
-const verifyRecoverCode = asyncHandler(async (req, res) => {
+const verifyRecoverCode = async (req, res) => {
   const { code, email } = req.body;
-
+  console.log("req.body", req.body);
   const reset = await Reset.findOne({ email, code });
-  // console.log("reset", reset);
 
-  if (reset) {
+  if (reset)
     return res.status(200).json({ message: "Recovery status Accepted" });
-  } else {
-    return res.status(401).json({
-      message: "Invalid Email or Password",
-    });
-  }
-});
-
-const resetPassword = asyncHandler(async (req, res) => {
-  console.log("reset");
-
-  const { password, confirm_password, code, email } = req.body;
-
-  if (!comparePassword(password, confirm_password))
-    return res.status(400).json({ message: "Password Not Equal" });
-  const reset = await Reset.findOne({ email, code });
-  console.log("reset", reset);
-  if (!reset)
-    return res.status(400).json({ message: "Invalid Recovery status" });
   else {
-    console.log("resetexist");
-    const updatedadmin = await Admin.findOne({ email });
-    updatedadmin.password = password;
-    await updatedadmin.save();
-    console.log("updatedadmin", updatedadmin);
-    res.status(201).json({
-      _id: updatedadmin._id,
-      firstName: updatedadmin.firstName,
-      userImage:updatedadmin.userImage,
-
-      lastName: updatedadmin.lastName,
-      email: updatedadmin.email,
-
-      token: generateToken(updatedadmin._id),
-    });
+    return res.status(400).json({ message: "Invalid Code" });
   }
+  // console.log("reset", reset);
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    console.log("reset");
+
+    const { password, confirm_password, code, email } = req.body;
+    console.log("req.body", req.body);
+    if (!comparePassword(password, confirm_password))
+      return res.status(400).json({ message: "Password does not match" });
+    const reset = await Reset.findOne({ email, code });
+    console.log("reset", reset);
+    if (!reset)
+      return res.status(400).json({ message: "Invalid Recovery status" });
+    else {
+      console.log("resetexist");
+      const updatedadmin = await Admin.findOne({ email });
+      updatedadmin.password = password;
+      await updatedadmin.save();
+      console.log("updatedadmin", updatedadmin);
+      res.status(201).json({
+        _id: updatedadmin._id,
+        firstName: updatedadmin.firstName,
+        userImage: updatedadmin.userImage,
+        lastName: updatedadmin.lastName,
+        email: updatedadmin.email,
+        token: generateToken(updatedadmin._id),
+      });
+    }
+  } catch (error) {
+    console.log("error", error);
+    return res.status(400).json({ message: error.toString() });
+  }
+
   // return updatedadmin
   // await res.status(201).json({
   //   message: "Password Updated",
   // });
-});
+};
 
 const editProfile = asyncHandler(async (req, res) => {
   const { firstName, lastName } = req.body;
@@ -162,14 +164,14 @@ const editProfile = asyncHandler(async (req, res) => {
   //   message: "Admin Update",
   //   admin,
   // });
-await res.status(201).json({
+  await res.status(201).json({
     _id: admin._id,
     firstName: admin.firstName,
     lastName: admin.lastName,
     email: admin.email,
-    userImage:admin.userImage,
+    userImage: admin.userImage,
     token: generateToken(admin._id),
-  })
+  });
 });
 
 const registerUser = asyncHandler(async (req, res) => {
@@ -188,7 +190,7 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
   });
-console.log('user',user)
+  console.log("user", user);
   if (user) {
     res.status(201).json({
       _id: user._id,
@@ -201,9 +203,17 @@ console.log('user',user)
     res.status(400);
     throw new Error("Invalid user data");
   }
-})
+});
 const registerVendor = asyncHandler(async (req, res) => {
-  const { firstName, lastName, email, password,address,printerLocation,phone } = req.body;
+  const {
+    firstName,
+    lastName,
+    email,
+    password,
+    address,
+    printerLocation,
+    phone,
+  } = req.body;
 
   const VendorExists = await Vendor.findOne({ email });
 
@@ -221,16 +231,16 @@ const registerVendor = asyncHandler(async (req, res) => {
     printerLocation,
     phone,
   });
-console.log('vendor',vendor)
+  console.log("vendor", vendor);
   if (vendor) {
     res.status(201).json({
       _id: vendor._id,
       firstName: vendor.firstName,
       lastName: vendor.lastName,
       email: vendor.email,
-      address:vendor.address,
-      printerLocation:vendor.printerLocation,
-      phone:vendor.phone,
+      address: vendor.address,
+      printerLocation: vendor.printerLocation,
+      phone: vendor.phone,
 
       token: generateToken(vendor._id),
     });
@@ -238,8 +248,7 @@ console.log('vendor',vendor)
     res.status(400);
     throw new Error("Invalid vendor data");
   }
-})
-
+});
 
 export {
   registerAdmin,
@@ -249,5 +258,5 @@ export {
   resetPassword,
   editProfile,
   registerUser,
-  registerVendor
+  registerVendor,
 };

@@ -129,7 +129,7 @@ const getVendorPrintlogs = async (req, res) => {
           $lte: moment.utc(new Date(to)).endOf("day"),
         },
       };
-    console.log("dateFilter", dateFilter);
+    console.log("dateFilter1", dateFilter);
 
     const print = await Print.paginate(
       {
@@ -173,11 +173,11 @@ const getAllPrintlogs = async (req, res) => {
     if (from && to)
       dateFilter = {
         createdAt: {
-          $gt: new Date(from),
-          $lt: new Date(to),
+          $gte: moment.utc(new Date(from)).startOf("day").toDate(),
+          $lte: moment.utc(new Date(to)).endOf("day").toDate(),
         },
       };
-    console.log("dateFilter", dateFilter);
+    console.log("dateFilter2", dateFilter);
     const print = await Print.paginate(
       {
         ...searchParam,

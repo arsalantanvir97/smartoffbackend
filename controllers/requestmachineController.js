@@ -1,6 +1,6 @@
 import RequestMachine from "../models/RequestMachineModel";
 import moment from "moment";
-
+import CreateNotification from '../utills/notification.js'
 const createRequestMachine = async (req, res) => {
     const { id,firstName, lastName,organizationName,numberOfMachineReq,organizationAddress,branchName,branchAddress,Message } = req.body;
 console.log('req.body',req.body)
@@ -24,6 +24,19 @@ console.log('req.body',req.body)
     const requestmachinecreated=await requestmachine.save()
     console.log('requestmachinecreated',requestmachinecreated)
       if (requestmachinecreated) {
+        const notification = {
+          notifiableId: null,
+          notificationType: "Admin",
+          title: "Request Machine",
+          body: `${firstName} from ${organizationName} has request for ${numberOfMachineReq} machines`,
+          payload: {
+            type: "SUBSCRIPTION",
+            id: id,
+          },
+        };
+        CreateNotification(notification);
+    
+
         res.status(201).json({
             requestmachinecreated
         });

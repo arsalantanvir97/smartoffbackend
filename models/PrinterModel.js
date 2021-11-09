@@ -7,6 +7,7 @@ const PrinterSchema = mongoose.Schema(
       type: { type: String, },
 
 printerlocation:{type: String},
+printergeolocation:{type:[Number]}
     },
     {
       timestamps: true,

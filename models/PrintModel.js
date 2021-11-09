@@ -10,7 +10,7 @@ const PrintSchema = mongoose.Schema(
     documentname: { type: String },
     pages: { type: Number },
     costperpage: { type: Number },
-    printlocation: { type: [Number] },
+    printlocation: { type: String },
     type: { type: String },
     totalcost: { type: Number },
     userid: { type: String },
