@@ -161,7 +161,7 @@ const getCountofallCollection = async (req, res) => {
         ]),
         Print.aggregate(query),
       ]);
-
+console.log('salesCount',salesCount)
     salesCount.forEach((data) => {
       if (data) arr[data.month - 1] = data.count;
     });

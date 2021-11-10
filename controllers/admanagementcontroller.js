@@ -117,7 +117,9 @@ req.files.ad_video[0].path;
     try {
       console.log('api hit2')
       const admanagement=await AdmanagementModel.updateMany({}, {$set:{"cost": Number(req.body.cost)}})
-      
+      await res.status(201).json({
+        message:'Cost set for Ad',
+      });
     } catch (err) {
       res.status(500).json({
         message: err.toString(),

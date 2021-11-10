@@ -155,11 +155,11 @@ const editProfile = asyncHandler(async (req, res) => {
     req.files.user_image &&
     req.files.user_image[0] &&
     req.files.user_image[0].path;
-
+console.log('user_image',user_image)
   const admin = await Admin.findOne();
   admin.firstName = firstName;
   admin.lastName = lastName;
-  admin.userImage = user_image;
+  admin.userImage = user_image ? user_image  : admin.userImage
   await admin.save();
   // await res.status(201).json({
   //   message: "Admin Update",
