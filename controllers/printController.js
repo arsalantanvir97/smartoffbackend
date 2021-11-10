@@ -1,6 +1,7 @@
 import Print from "../models/PrintModel.js";
 import Setting from "../models/SettingsModel.js";
 import User from "../models/UserModel.js";
+import CreateNotification from '../utills/notification.js'
 
 import moment from "moment";
 
@@ -56,6 +57,20 @@ const createPrint = async (req, res) => {
     const printcreated = await print.save();
     console.log("printcreated", printcreated);
     if (printcreated) {
+      const notification = {
+        notifiableId: null,
+        notificationType: "Admin",
+        title: "Print Created",
+        body: `A user name ${firstName} has printed a document named ${documentname} consisting of ${pages} pages which cost is ${totalcost}`,
+        payload: {
+          type: "PRINTER",
+          id: userid,
+        },
+      };
+      CreateNotification(notification);
+  
+
+
       res.status(201).json({
         printcreated,
       });
@@ -116,8 +131,17 @@ const getVendorPrintlogs = async (req, res) => {
   try {
     console.log("req.query.searchString", req.query.searchString);
     const searchParam = req.query.searchString
-      ? { $text: { $search: req.query.searchString } }
-      : {};
+    ?
+    // { $text: { $search: req.query.searchString } }
+    {
+      $or: [
+        { userName: { $regex: `${req.query.searchString}`, $options: "i" } },
+        { printlocation: { $regex: `${req.query.searchString}`, $options: "i" } },
+
+      ],
+    }
+
+    : {};
     const status_filter = req.query.status ? { status: req.query.status } : {};
     const from = req.query.from;
     const to = req.query.to;
@@ -163,9 +187,20 @@ const getAllPrintlogs = async (req, res) => {
       req.query.searchString,
       req.query.from
     );
+    
+    
     const searchParam = req.query.searchString
-      ? { $text: { $search: req.query.searchString } }
-      : {};
+    ?
+    // { $text: { $search: req.query.searchString } }
+    {
+      $or: [
+        { userName: { $regex: `${req.query.searchString}`, $options: "i" } },
+        { printlocation: { $regex: `${req.query.searchString}`, $options: "i" } },
+
+      ],
+    }
+
+    : {};
     const status_filter = req.query.status ? { status: req.query.status } : {};
     const from = req.query.from;
     const to = req.query.to;

@@ -5,6 +5,7 @@ import {
   getttingalltheNotification,
   getAllNotificationlogs,
   getSingleNotification,
+  markallNotificationasRead
 } from "../controllers/notificationContoller";
 import { protect } from "../middlewares/authMiddleware";
 
@@ -13,5 +14,7 @@ router.get("/getallNotification", protect, getttingalltheNotification);
 
 router.get("/notificationlogs", getAllNotificationlogs);
 router.get("/singlenotification/:id", getSingleNotification);
+router.get("/markallNotificationasRead", markallNotificationasRead);
+
 
 export default router;

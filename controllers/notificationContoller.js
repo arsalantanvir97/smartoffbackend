@@ -4,6 +4,7 @@ const getttingalltheNotification = async (req, res) => {
   try {
     const getAllNotification = await Notification.find();
     if (getAllNotification) {
+      console.log('getAllNotification',getAllNotification)
       res.status(201).json({
         getAllNotification,
       });
@@ -74,8 +75,30 @@ const getSingleNotification = async (req, res) => {
   }
 };
 
+const markallNotificationasRead = async (req, res) => {
+  try {
+    let notification = await Notification.updateMany(
+      {},
+      // { _id: { $in: req.body.notificationIds } },
+      {
+        $set: { isread: true },
+      }
+    );
+    const getAllNotification=await Notification.find()
+  console.log('notification',getAllNotification)
+    res.status(200).json(getAllNotification);
+  } catch (error) {
+    res.status(500).json({
+      message: error.toString(),
+    });  }
+};
+
+
+
+
 export {
   getttingalltheNotification,
   getAllNotificationlogs,
   getSingleNotification,
+  markallNotificationasRead
 };

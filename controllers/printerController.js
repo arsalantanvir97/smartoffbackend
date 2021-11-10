@@ -1,4 +1,5 @@
 import Printer from "../models/PrinterModel";
+import CreateNotification from '../utills/notification.js'
 
 const createPrinter = async (req, res) => {
     const { vendorid,type, printerlocation } = req.body;
@@ -21,6 +22,9 @@ const printerid= Math.floor(10000 + Math.random() * 900000);
     const printercreated=await printer.save()
     console.log('printercreated',printercreated)
       if (printercreated) {
+
+     
+
         res.status(201).json({
             printercreated
         });

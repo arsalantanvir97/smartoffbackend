@@ -1,5 +1,6 @@
 import Subscription from "../models/SubscriptionModel.js";
 import moment from "moment";
+import CreateNotification from '../utills/notification.js'
 
 const createSubscription  = async (req, res) => {
     const { packagename,duration, amount,Features,status } = req.body;
@@ -66,6 +67,19 @@ console.log('req.body',req.body)
     const subscription = await Subscription.findByIdAndUpdate({_id:id}, { packagename: packagename, duration: duration,amount:cost,status:status }, { new: true });
  
     if (subscription) {
+
+      const notification = {
+        notifiableId: null,
+        notificationType: "Admin",
+        title: "Subscription Updated",
+        body: `You updated subscription details of ${packagename}`,
+        payload: {
+          type: "SUBSCRIPTION",
+          id: id,
+        },
+      };
+      CreateNotification(notification);
+
       res.json(subscription)
     } else {
       res.status(404)

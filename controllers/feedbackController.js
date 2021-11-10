@@ -1,5 +1,6 @@
 import Feedback from "../models/FeedbackModel.js";
 import moment from "moment";
+import CreateNotification from '../utills/notification.js'
 
 const createFeedback = async (req, res) => {
     const { id,firstName, lastName,email,type,subject,message } = req.body;
@@ -22,6 +23,18 @@ console.log('req.body',req.body)
     const feedbackcreated=await feedback.save()
     console.log('feedbackcreated',feedbackcreated)
       if (feedbackcreated) {
+        const notification = {
+          notifiableId: null,
+          notificationType: "Feedback",
+          title: "Feedback Created",
+          body: `${firstName} has created an Feedback which now waits your approval`,
+          payload: {
+            type: "FEEDBACK",
+            id: id,
+          },
+        };
+        CreateNotification(notification);
+
         res.status(201).json({
             feedbackcreated
         });
@@ -35,8 +48,18 @@ console.log('req.body',req.body)
     try {
       console.log('req.query.searchString',req.query.searchString)
       const searchParam = req.query.searchString
-        ? { $text: { $search: req.query.searchString } }
-        : {};
+      ?
+      // { $text: { $search: req.query.searchString } }
+      {
+        $or: [
+          { firstName: { $regex: `${req.query.searchString}`, $options: "i" } },
+          { lastName: { $regex: `${req.query.searchString}`, $options: "i" } },
+          { type: { $regex: `${req.query.searchString}`, $options: "i" } },
+
+        ],
+      }
+  
+      : {};
       const status_filter = req.query.status ? { status: req.query.status } : {};
       const from = req.query.from ;
       const to = req.query.to;

@@ -1,4 +1,6 @@
 import Setting from "../models/SettingsModel.js";
+import CreateNotification from '../utills/notification.js'
+
 const createSetting  = async (req, res) => {
     const { costforcolor,costforblackandwhite,comissonsetting } = req.body;
 console.log('req.body',req.body)
@@ -51,6 +53,18 @@ console.log('req.body',req.body)
     const setting = await Setting.findByIdAndUpdate({_id:id}, { costforblackandwhite: costforblackandwhite, costforcolor: costforcolor,comissonsetting:comissonsetting }, { new: true });
  
     if (setting) {
+      const notification = {
+        notifiableId: null,
+        notificationType: "Admin",
+        title: "Settings Updated",
+        body: `You updated percent of commission and cost for color and black and white print`,
+        payload: {
+          type: "SETTINGS",
+          id: id,
+        },
+      };
+      CreateNotification(notification);
+  
       res.json(setting)
     } else {
       res.status(404)

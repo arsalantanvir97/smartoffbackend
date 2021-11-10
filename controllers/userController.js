@@ -7,10 +7,18 @@ import User from "../models/UserModel.js";
 
 const logs = async (req, res) => {
   try {
-    console.log("req.query.searchString", req.query.searchString);
     const searchParam = req.query.searchString
-      ? { $text: { $search: req.query.searchString } }
-      : {};
+    ?
+    // { $text: { $search: req.query.searchString } }
+    {
+      $or: [
+        { firstName: { $regex: `${req.query.searchString}`, $options: "i" } },
+        { lastName: { $regex: `${req.query.searchString}`, $options: "i" } },
+
+      ],
+    }
+
+    : {};
     const status_filter = req.query.status ? { status: req.query.status } : {};
     const from = req.query.from;
     const to = req.query.to;

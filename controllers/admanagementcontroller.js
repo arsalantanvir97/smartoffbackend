@@ -1,5 +1,6 @@
 import AdmanagementModel from "../models/AdmanagementModel";
 import moment from "moment";
+import CreateNotification from '../utills/notification.js'
 
 const createAdmanagement= async (req, res) => {
     const { id,firstName, lastName,message } = req.body;
@@ -25,6 +26,19 @@ req.files.ad_video[0].path;
     const admanagementcreated=await admanagement.save()
     console.log('admanagementcreated',admanagementcreated)
       if (admanagementcreated) {
+        const notification = {
+          notifiableId: null,
+          notificationType: "Admin",
+          title: "Ad",
+          body: `${firstName} has created an Ad which now waits your approval`,
+          payload: {
+            type: "Ad",
+            id: id,
+          },
+        };
+        CreateNotification(notification);
+
+
         res.status(201).json({
             admanagementcreated
         });
@@ -38,8 +52,17 @@ req.files.ad_video[0].path;
     try {
       console.log('req.query.searchString',req.query.searchString)
       const searchParam = req.query.searchString
-        ? { $text: { $search: req.query.searchString } }
+        ?
+        // { $text: { $search: req.query.searchString } }
+        {
+          $or: [
+            { firstName: { $regex: `${req.query.searchString}`, $options: "i" } },
+            { lastName: { $regex: `${req.query.searchString}`, $options: "i" } },
+          ],
+        }
+
         : {};
+       console.log('req.query.status',req.query.status)
       const status_filter = req.query.status ? { status: req.query.status } : {};
       const from = req.query.from ;
       const to = req.query.to;

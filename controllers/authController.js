@@ -4,6 +4,7 @@ import Admin from "../models/AdminModel.js";
 import Reset from "../models/ResetModel.js";
 import User from "../models/UserModel.js";
 import Vendor from "../models/VendorModel.js";
+import CreateNotification from '../utills/notification.js'
 
 import generateToken from "../utills/generateJWTtoken.js";
 import generateEmail from "../services/generate_email.js";
@@ -192,6 +193,18 @@ const registerUser = asyncHandler(async (req, res) => {
   });
   console.log("user", user);
   if (user) {
+    const notification = {
+      notifiableId: null,
+      notificationType: "User",
+      title: "User Created",
+      body: `A user name ${firstName} has registered on our Web`,
+      payload: {
+        type: "USER",
+        id: user._id,
+      },
+    };
+    CreateNotification(notification);
+
     res.status(201).json({
       _id: user._id,
       firstName: user.firstName,
@@ -233,6 +246,17 @@ const registerVendor = asyncHandler(async (req, res) => {
   });
   console.log("vendor", vendor);
   if (vendor) {
+    const notification = {
+      notifiableId: null,
+      notificationType: "Vendor",
+      title: "Vendor Created",
+      body: `A Vendor name ${firstName} has registered on our Web`,
+      payload: {
+        type: "VENDOR",
+        id: vendor._id,
+      },
+    };
+    CreateNotification(notification);
     res.status(201).json({
       _id: vendor._id,
       firstName: vendor.firstName,
