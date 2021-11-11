@@ -8,7 +8,8 @@ import {
   resetPassword,
   editProfile,
   registerUser,
-  registerVendor
+  registerVendor,
+  verifyAndREsetPassword
 } from "../controllers/authController.js";
 import { protect } from "../middlewares/authMiddleware";
 
@@ -20,6 +21,8 @@ router.post("/adminresetPassword", resetPassword);
 router.post("/editProfile",protect, editProfile);
 router.post("/registerUser", registerUser);
 router.post("/registerVendor", registerVendor);
+router.post("/verifyAndREsetPassword", verifyAndREsetPassword);
+
 
 
 export default router;

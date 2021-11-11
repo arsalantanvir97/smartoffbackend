@@ -148,6 +148,53 @@ const resetPassword = async (req, res) => {
   // });
 };
 
+const verifyAndREsetPassword = async (req, res) => {
+  try {
+    console.log("reset");
+
+    const { existingpassword,newpassword, confirm_password, email } = req.body;
+
+    console.log("req.body", req.body);
+    const admin = await Admin.findOne({ email });
+
+    if (admin && (await admin.matchPassword(existingpassword))) {
+      console.log('block1')
+      if (!comparePassword(newpassword, confirm_password)){
+      console.log('block2')
+      return res.status(400).json({ message: "Password does not match" });}
+      else {
+        console.log("block3");
+        admin.password = newpassword;
+        await admin.save();
+        console.log("admin", admin);
+        res.status(201).json({
+          _id: admin._id,
+          firstName: admin.firstName,
+          userImage: admin.userImage,
+          lastName: admin.lastName,
+          email: admin.email,
+          token: generateToken(admin._id),
+        });
+      }
+    }
+    else{
+      console.log("block4");
+
+      return res.status(401).json({ message: "Wrong Password" });
+    }
+  } catch (error) {
+    console.log("error", error);
+    return res.status(400).json({ message: error.toString() });
+  }
+
+  // return updatedadmin
+  // await res.status(201).json({
+  //   message: "Password Updated",
+  // });
+};
+
+
+
 const editProfile = asyncHandler(async (req, res) => {
   const { firstName, lastName } = req.body;
   let user_image =
@@ -282,5 +329,6 @@ export {
   resetPassword,
   editProfile,
   registerUser,
+  verifyAndREsetPassword,
   registerVendor,
 };
