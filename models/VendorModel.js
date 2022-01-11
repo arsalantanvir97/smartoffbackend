@@ -2,40 +2,40 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import mongoosePaginate from "mongoose-paginate-v2";
 
-
 const VendorSchema = mongoose.Schema(
   {
     firstName: {
-      type: String,
+      type: String
     },
     lastName: {
-      type: String,
+      type: String
     },
     email: {
       type: String,
       required: true,
-      unique: true,
+      unique: true
     },
     password: {
       type: String,
-      required: true,
+      required: true
     },
-    phone:{
-        type: String || Number,
-      },
-    address:{
-        type: String,
-      },
-      organizationName:{
-        type: String,
-      },printerLocation:{
-        type: Array,
-      },
-          userImage: { type: String },
-    status: { type: Boolean, default: true },
+    phone: {
+      type: String || Number
+    },
+    address: {
+      type: String
+    },
+    organizationName: {
+      type: String
+    },
+    printerLocation: {
+      type: Array
+    },
+    userImage: { type: String },
+    status: { type: Boolean, default: true }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
 );
 
