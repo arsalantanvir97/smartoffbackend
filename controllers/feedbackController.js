@@ -3,7 +3,7 @@ import moment from "moment";
 import CreateNotification from '../utills/notification.js'
 
 const createFeedback = async (req, res) => {
-    const { id,firstName, lastName,email,type,subject,message } = req.body;
+    const { firstName, lastName,email,type,subject,message } = req.body;
 console.log('req.body',req.body)
     try {
       const feedback =new Feedback ({
@@ -13,27 +13,14 @@ console.log('req.body',req.body)
         type,
         subject,
         message,
-        id,}
+        }
       )
       console.log('feedback',feedback)
-    //   const feedbackcreated = await Feedback.create(
-    //     feedback
-    //   );
-    //   console.log('feedbackcreated',feedbackcreated)
+ 
     const feedbackcreated=await feedback.save()
     console.log('feedbackcreated',feedbackcreated)
       if (feedbackcreated) {
-        const notification = {
-          notifiableId: null,
-          notificationType: "Feedback",
-          title: "Feedback Created",
-          body: `${firstName} has created an Feedback which now waits your approval`,
-          payload: {
-            type: "FEEDBACK",
-            id: id,
-          },
-        };
-        CreateNotification(notification);
+       
 
         res.status(201).json({
             feedbackcreated

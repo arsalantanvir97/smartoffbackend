@@ -3,24 +3,29 @@ import bcrypt from "bcryptjs";
 import mongoosePaginate from "mongoose-paginate-v2";
 
 const RequestMachineSchema = mongoose.Schema(
-    {
-      firstName: { type: String,},
-      lastName: { type: String,},
-      organizationName: { type: String, },
-      numberOfMachineReq: { type: Number, },
-      organizationAddress: { type: String, },
-      branchName: { type: String, },
-      branchAddress: { type: String, },
-      Message: { type: String, },
-
-      id: { type: String, },
+  {
+    organizationName: { type: String },
+    numberOfMachineReq: { type: Number },
+    branchid: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Branch"
     },
-    {
-      timestamps: true,
-    }
-  )
-  RequestMachineSchema.plugin(mongoosePaginate);
-  RequestMachineSchema.index({ "$**": "text" });
+    Message: { type: String },
+    vendorid: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Vendor"
+    },
+    idofvendor: {
+      type: String
+    },
+    status: { type: Boolean, default: false }
+  },
+  {
+    timestamps: true
+  }
+);
+RequestMachineSchema.plugin(mongoosePaginate);
+RequestMachineSchema.index({ "$**": "text" });
 
 const RequestMachine = mongoose.model("RequestMachine", RequestMachineSchema);
 

@@ -2,19 +2,20 @@ import RequestMachine from "../models/RequestMachineModel";
 import moment from "moment";
 import CreateNotification from '../utills/notification.js'
 const createRequestMachine = async (req, res) => {
-    const { id,firstName, lastName,organizationName,numberOfMachineReq,organizationAddress,branchName,branchAddress,Message } = req.body;
+    const { organizationName,
+      numberOfMachineReq,
+      branchid,
+      Message,
+      vendorid } = req.body;
 console.log('req.body',req.body)
     try {
       const requestmachine =new RequestMachine ({
-        firstName,
-        lastName,
         organizationName,
         numberOfMachineReq,
-        organizationAddress,
-        branchName,
-        branchAddress,
+        branchid:JSON.parse(branchid),
         Message,
-        id,}
+        vendorid,
+        idofvendor:vendorid}
       )
       console.log('requestmachine',requestmachine)
     //   const feedbackcreated = await Feedback.create(
@@ -28,10 +29,10 @@ console.log('req.body',req.body)
           notifiableId: null,
           notificationType: "Admin",
           title: "Request Machine",
-          body: `${firstName} from ${organizationName} has request for ${numberOfMachineReq} machines`,
+          body: `${organizationName} has request for ${numberOfMachineReq} machines`,
           payload: {
             type: "SUBSCRIPTION",
-            id: id,
+            id: vendorid,
           },
         };
         CreateNotification(notification);
@@ -54,8 +55,7 @@ console.log('req.body',req.body)
       // { $text: { $search: req.query.searchString } }
       {
         $or: [
-          { firstName: { $regex: `${req.query.searchString}`, $options: "i" } },
-          { branchName: { $regex: `${req.query.searchString}`, $options: "i" } },
+
           { organizationName: { $regex: `${req.query.searchString}`, $options: "i" } },
 
         ],
@@ -99,7 +99,21 @@ console.log('req.body',req.body)
   };
   const getRequestMachineDetails = async (req, res) => {
     try {
-      const requestmachine = await RequestMachine.findById(req.params.id).lean().select("-password");
+      const requestmachine = await RequestMachine.findById(req.params.id).populate('vendorid branchid');
+      await res.status(201).json({
+        requestmachine,
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: err.toString(),
+      });
+    }
+  };
+  const getRequestMachinebyVendorid = async (req, res) => {
+    const { 
+      vendorid } = req.body;
+    try {
+      const requestmachine = await RequestMachine.find({vendorid:vendorid}).populate('vendorid branchid');
       await res.status(201).json({
         requestmachine,
       });
@@ -111,5 +125,5 @@ console.log('req.body',req.body)
   };
 
 
-  export {createRequestMachine,RequestMachinelogs,getRequestMachineDetails};
+  export {createRequestMachine,RequestMachinelogs,getRequestMachineDetails,getRequestMachinebyVendorid};
 

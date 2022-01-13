@@ -4,22 +4,29 @@ import mongoosePaginate from "mongoose-paginate-v2";
 
 const PrintSchema = mongoose.Schema(
   {
-    vendorid: { type: String },
-    printid: { type: String },
-    printerid: { type: String },
+    vendorid: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Vendor"
+    },
+   
     documentname: { type: String },
     pages: { type: Number },
     costperpage: { type: Number },
-    printlocation: { type: String },
     type: { type: String },
     totalcost: { type: Number },
-    userid: { type: String },
+    userid: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    },
     adminComission: { type: Number },
-
-    userName: { type: String },
+    requestformachine: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "RequestMachine"
+    },
+    userName: { type: String }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
 );
 PrintSchema.plugin(mongoosePaginate);
