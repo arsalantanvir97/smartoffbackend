@@ -5,6 +5,7 @@ import CreateNotification from "../utills/notification.js";
 import Mongoose from "mongoose";
 
 import moment from "moment";
+import Vendor from "../models/VendorModel.js";
 
 const createPrint = async (req, res) => {
   const {
@@ -57,11 +58,11 @@ const createPrint = async (req, res) => {
     if (printcreated) {
       const notification = {
         notifiableId: null,
-        notificationType: "Admin",
+        notificationType: "Vendor",
         title: "Print Created",
         body: `A user name ${userName} has printed a document named ${documentname} consisting of ${pages} pages which cost is ${totalcost}`,
         payload: {
-          type: "PRINTER",
+          type: "User",
           id: userid
         }
       };
@@ -123,6 +124,74 @@ const Printlogs = async (req, res) => {
     });
   }
 };
+
+
+const paidStatusVendorPrintlogs = async (req, res) => {
+  console.log("PringetVendorPrintlogstlogs", req.query.paid);
+  try {
+    console.log("req.query.searchString", req.query.searchString);
+    const searchParam = req.query.searchString
+      ? // { $text: { $search: req.query.searchString } }
+        {
+          $or: [
+            {
+              userName: { $regex: `${req.query.searchString}`, $options: "i" }
+            },
+            {
+              printlocation: {
+                $regex: `${req.query.searchString}`,
+                $options: "i"
+              }
+            }
+          ]
+        }
+      : {};
+    const status_filter = req.query.status ? { status: req.query.status } : {};
+    const paid_filter = req.query.paid ? { paid: req.query.paid } : {};
+console.log('paid_filter',paid_filter)
+    const from = req.query.from;
+    const to = req.query.to;
+    let dateFilter = {};
+    if (from && to)
+      dateFilter = {
+        createdAt: {
+          $gte: moment.utc(new Date(from)).startOf("day"),
+          $lte: moment.utc(new Date(to)).endOf("day")
+        }
+      };
+    console.log("dateFilter1", dateFilter);
+    console.log("61839400187a3d5113e4e218", req.query.id);
+    const print = await Print.paginate(
+      {...paid_filter,
+        vendorid: Mongoose.mongo.ObjectId(req.query.id),
+        ...searchParam,
+        ...status_filter,
+        ...dateFilter
+      },
+      {
+        page: req.query.page,
+        limit: req.query.perPage,
+        lean: true,
+        sort: "-_id",
+        populate: {
+          path: "vendorid userid requestformachine",
+          populate: {
+            path: "branchid"
+          }
+        }
+      }
+    );
+    await res.status(200).json({
+      print
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
 const getVendorPrintlogs = async (req, res) => {
   console.log("PringetVendorPrintlogstlogs", req.query);
   try {
@@ -167,7 +236,13 @@ const getVendorPrintlogs = async (req, res) => {
         page: req.query.page,
         limit: req.query.perPage,
         lean: true,
-        sort: "-_id"
+        sort: "-_id",
+        populate: {
+          path: "vendorid userid requestformachine",
+          populate: {
+            path: "branchid"
+          }
+        }
       }
     );
     await res.status(200).json({
@@ -243,7 +318,12 @@ const getAllPrintlogs = async (req, res) => {
 
 const getPrintDetails = async (req, res) => {
   try {
-    const print = await Print.findById(req.params.id);
+    const print = await Print.findById(req.params.id).populate({
+      path: "vendorid userid requestformachine",
+      populate: {
+        path: "branchid"
+      }
+    });
     await res.status(201).json({
       print
     });
@@ -253,6 +333,27 @@ const getPrintDetails = async (req, res) => {
     });
   }
 };
+const getLatestPrintsofVendor = async (req, res) => {
+  try {
+    const print = await Print.find({vendorid:req.params.id}).sort({ $natural: -1 }).limit(5).populate({
+      path: "vendorid userid requestformachine",
+      populate: {
+        path: "branchid"
+      }
+    });;
+
+    await res.status(201).json({
+      print,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString(),
+    });
+  }
+};
+
+
+
 
 export {
   createPrint,
@@ -260,4 +361,6 @@ export {
   getPrintDetails,
   getAllPrintlogs,
   getVendorPrintlogs
+  ,paidStatusVendorPrintlogs,
+  getLatestPrintsofVendor
 };

@@ -1,4 +1,8 @@
 import Vendor from "../models/VendorModel.js";
+import Print from "../models/PrintModel";
+import RequestMachineModel from "../models/RequestMachineModel";
+import AdmanagementModel from "../models/AdmanagementModel";
+
 import asyncHandler from "express-async-handler";
 import CreateNotification from "../utills/notification.js";
 import generateToken from "../utills/generateJWTtoken.js";
@@ -13,6 +17,7 @@ import {
   generateHash
 } from "../queries";
 import Reset from "../models/ResetModel.js";
+import Mongoose from "mongoose";
 const registerVendor = async (req, res) => {
   const {
     firstName,
@@ -332,6 +337,94 @@ const getVendorDetails = async (req, res) => {
   }
 };
 
+const getCountofallCollection = async (req, res) => {
+  try {
+    console.log("req.params.id", req.query);
+    const { year1, id } = req.query;
+    const yearuser = req.query.year1 ? req.query.year1 : [];
+
+    const arr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    const start_date = moment(yearuser).startOf("year").toDate();
+    const end_date = moment(yearuser).endOf("year").toDate();
+    const query = [
+      {
+        $match: {
+          createdAt: {
+            $gte: start_date,
+            $lte: end_date
+          },
+          vendorid: Mongoose.mongo.ObjectId(id)
+        }
+      },
+      {
+        $addFields: {
+          date: {
+            $month: "$createdAt"
+          }
+        }
+      },
+      {
+        $group: {
+          _id: "$date",
+          count: { $sum: "$totalcost" }
+        }
+      },
+      {
+        $addFields: {
+          month: "$_id"
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          month: 1,
+          count: 1
+        }
+      }
+    ];
+    const [print, printer, ad, salesCount, totalrevenue] = await Promise.all([
+      Print.find({ vendorid: id }).count(),
+      RequestMachineModel.find({ vendorid: id }).count(),
+      AdmanagementModel.find({ vendorid: id }).count(),
+      Print.aggregate(query),
+      Print.aggregate([
+        {
+          $match: {
+            vendorid: Mongoose.mongo.ObjectId(id)
+          }
+        },
+        {
+          $group: {
+            _id: "$vendorid",
+            count: { $sum: "$totalcost" }
+          }
+        },
+        {
+          $project: {
+            count: 1
+          }
+        }
+      ])
+    ]);
+    console.log("salesCount", salesCount);
+    salesCount.forEach((data) => {
+      if (data) arr[data.month - 1] = data.count;
+    });
+    await res.status(201).json({
+      print,
+      printer,
+      ad,
+      graph_data: arr,
+      totalrevenue
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
 export {
   Vendorlogs,
   toggleActiveStatus,
@@ -342,5 +435,6 @@ export {
   verifyRecoverCode,
   resetPassword,
   editProfile,
-  verifyAndREsetPassword
+  verifyAndREsetPassword,
+  getCountofallCollection
 };

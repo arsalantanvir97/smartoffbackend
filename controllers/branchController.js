@@ -1,6 +1,8 @@
 import Branch from "../models/BranchModel";
 import moment from "moment";
 import CreateNotification from "../utills/notification.js";
+import Mongoose from "mongoose";
+
 const createBranch = async (req, res) => {
   const {
     branchName,
@@ -35,7 +37,7 @@ const createBranch = async (req, res) => {
         title: "Branch Created",
         body: `Branch created by a vendor having id of${vendorid} `,
         payload: {
-          type: "BRANCH",
+          type: "Vendor",
           id: vendorid
         }
       };
@@ -124,6 +126,7 @@ const getBranchDetails = async (req, res) => {
       });
     }
   };
+  
 
   const editBranch = async (req, res) => {
     const { id, branchName,
@@ -150,9 +153,22 @@ const getBranchDetails = async (req, res) => {
         branch
     });
   };
-  const allBranches = async (req, res) => {
+  const allBranchesofVendor = async (req, res) => {
     const { id } = req.body;
   console.log('req',req.body,id)
+    try {
+      const branches = await Branch.find({vendorid:id}).populate('vendorid');
+     
+      await res.status(201).json({
+        branches
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: err.toString()
+      });
+    }
+  };
+  const allBranches = async (req, res) => {
     try {
       const branches = await Branch.find().populate('vendorid');
      
@@ -175,4 +191,65 @@ const getBranchDetails = async (req, res) => {
       });
     }
   };
-export { createBranch ,Branchlogs,getBranchDetails,editBranch,allBranches,deleteBranch};
+
+
+
+  const BranchlogsofVendor = async (req, res) => {
+    try {
+      console.log("req.query.searchString", req.query.searchString);
+      const searchParam = req.query.searchString
+        ? // { $text: { $search: req.query.searchString } }
+          {
+            $or: [
+              {
+                branchName: { $regex: `${req.query.searchString}`, $options: "i" }
+              },
+              {
+                address: {
+                  $regex: `${req.query.searchString}`,
+                  $options: "i"
+                }
+              }
+            ]
+          }
+        : {};
+      console.log("req.query.status", req.query.status);
+      const status_filter = req.query.status ? { status: req.query.status } : {};
+      const from = req.query.from;
+      const to = req.query.to;
+      let dateFilter = {};
+      if (from && to)
+        dateFilter = {
+          createdAt: {
+            $gte: moment.utc(new Date(from)).startOf("day"),
+            $lte: moment.utc(new Date(to)).endOf("day")
+          }
+        };
+  
+      const branch = await Branch.paginate(
+        {
+          vendorid: Mongoose.mongo.ObjectId(req.query.id),
+
+          ...searchParam,
+          ...status_filter,
+          ...dateFilter
+        },
+        {
+          page: req.query.page,
+          limit: req.query.perPage,
+          lean: true,
+          sort: "-_id",
+          populate: "vendorid"
+        }
+      );
+      await res.status(200).json({
+          branch
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        message: err.toString()
+      });
+    }
+  };
+export { createBranch ,Branchlogs,getBranchDetails,editBranch,allBranches,deleteBranch,BranchlogsofVendor,allBranchesofVendor};

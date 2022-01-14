@@ -55,11 +55,11 @@ console.log('req.body',req.body)
     if (setting) {
       const notification = {
         notifiableId: null,
-        notificationType: "Admin",
+        notificationType: "Vendor",
         title: "Settings Updated",
-        body: `You updated percent of commission and cost for color and black and white print`,
+        body: `Updated price for Black and White:${costforblackandwhite},Color:${costforcolor} and Comissionon:${comissonsetting}`,
         payload: {
-          type: "SETTINGS",
+          type: "Admin",
           id: id,
         },
       };

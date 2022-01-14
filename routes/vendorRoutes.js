@@ -11,7 +11,8 @@ import {
   verifyRecoverCode,
   resetPassword,
   editProfile,
-  verifyAndREsetPassword
+  verifyAndREsetPassword,
+  getCountofallCollection
 } from "../controllers/vendorController.js";
 import { protect } from "../middlewares/authMiddleware";
 
@@ -25,5 +26,6 @@ router.post("/verifyAndREsetPassword", protect, verifyAndREsetPassword);
 router.get("/logs", protect, Vendorlogs);
 router.get("/toggle-active/:id", protect, toggleActiveStatus);
 router.get("/vendor-details/:id", protect, getVendorDetails);
+router.get("/getCountofallCollection", protect, getCountofallCollection);
 
 export default router;

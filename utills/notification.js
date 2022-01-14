@@ -15,7 +15,7 @@ const CreateNotification = async(data)=>{
             payload:payload
 
         })
-
+console.log('notification',notification)
         await notification.save()
     }catch (error) {
         console.log(error)

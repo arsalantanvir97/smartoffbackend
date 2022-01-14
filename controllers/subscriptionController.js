@@ -67,14 +67,14 @@ console.log('req.body',req.body)
     const subscription = await Subscription.findByIdAndUpdate({_id:id}, { packagename: packagename, duration: duration,amount:cost,status:status }, { new: true });
  
     if (subscription) {
-
+console.log('subscriptionsubscription')
       const notification = {
         notifiableId: null,
-        notificationType: "Admin",
+        notificationType: "Vendor",
         title: "Subscription Updated",
-        body: `You updated subscription details of ${packagename}`,
+        body: `${packagename} package name cost:${cost},duration:${duration} updated `,
         payload: {
-          type: "SUBSCRIPTION",
+          type: "Admin",
           id: id,
         },
       };

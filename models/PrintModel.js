@@ -23,7 +23,11 @@ const PrintSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "RequestMachine"
     },
-    userName: { type: String }
+    userName: { type: String },
+    paid:{type:Boolean,default:false},
+    paidDate:{type:Date},
+    status:{type:Boolean,default:true},
+
   },
   {
     timestamps: true
