@@ -8,8 +8,10 @@ const PrintSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Vendor"
     },
-   
+
     documentname: { type: String },
+    doc: { type: String },
+
     pages: { type: Number },
     costperpage: { type: Number },
     type: { type: String },
@@ -24,10 +26,9 @@ const PrintSchema = mongoose.Schema(
       ref: "RequestMachine"
     },
     userName: { type: String },
-    paid:{type:Boolean,default:false},
-    paidDate:{type:Date},
-    status:{type:Boolean,default:true},
-
+    paid: { type: Boolean, default: false },
+    paidDate: { type: Date },
+    status: { type: Boolean, default: true }
   },
   {
     timestamps: true

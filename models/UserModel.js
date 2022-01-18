@@ -5,26 +5,31 @@ import mongoosePaginate from "mongoose-paginate-v2";
 const UserSchema = mongoose.Schema(
   {
     firstName: {
-      type: String,
+      type: String
     },
     lastName: {
-      type: String,
+      type: String
     },
     email: {
       type: String,
       required: true,
-      unique: true,
+      unique: true
     },
     password: {
       type: String,
-      required: true,
+      required: true
     },
-    totalPrints:{type:Number,default:0},
+    totalPrints: { type: Number, default: 0 },
     userImage: { type: String },
     status: { type: Boolean, default: true },
+    subscriptionid: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Subscription"
+    },
+    subscription: { type: Object }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
 );
 

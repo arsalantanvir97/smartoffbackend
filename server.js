@@ -23,6 +23,7 @@ import PrinterRoutes from "./routes/printerRoutes";
 import PrintRoutes from "./routes/printRoutes";
 import notificationRoutes from "./routes//notificationRoutes";
 import BranchRoutes from "./routes//BranchRoutes";
+import folderRoutes from "./routes//folderRoutes";
 
 import Stripe from "stripe";
 const stripe = Stripe("sk_test_OVw01bpmRN2wBK2ggwaPwC5500SKtEYy9V");
@@ -115,7 +116,11 @@ app.use(
     {
       name: "ad_video",
       maxCount: 1
-    }
+    },
+    {
+      name: "doc_schedule",
+      maxCount: 1,
+    },
   ])
 );
 
@@ -131,9 +136,16 @@ app.use("/api/printer", PrinterRoutes);
 app.use("/api/print", PrintRoutes);
 app.use("/api/notification", notificationRoutes);
 app.use("/api/Branch", BranchRoutes);
+app.use("/api/folder", folderRoutes);
+
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(__dirname + "/uploads"));
+app.use("/api/download/uploads/:file_name", function (req, res) {
+  console.log("IN HERE", req.params);
+  const file = `${__dirname}/uploads/${req.params.file_name}`;
+  res.download(file); // Set disposition and send it.
+});
 
 app.get("/", (req, res) => {
   res.send("API is running....");

@@ -124,6 +124,20 @@ console.log('req.body',req.body)
     }
   };
 
+  const getRequestMachine = async (req, res) => {
+  
+    try {
+      const requestmachine = await RequestMachine.find().populate('vendorid branchid');
+      await res.status(201).json({
+        requestmachine,
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: err.toString(),
+      });
+    }
+  };
+  
 
-  export {createRequestMachine,RequestMachinelogs,getRequestMachineDetails,getRequestMachinebyVendorid};
+  export {createRequestMachine,RequestMachinelogs,getRequestMachineDetails,getRequestMachinebyVendorid,getRequestMachine};
 
