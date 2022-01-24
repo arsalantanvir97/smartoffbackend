@@ -14,7 +14,8 @@ import {
   resetPassword,
   editProfile,
   verifyAndREsetPassword,
-  paymentOfSubscription
+  paymentOfSubscription,
+  getUserDetailsandCheckSubscrptionExpiry
 } from "../controllers/userController.js";
 import { protect } from "../middlewares/authMiddleware";
 router.post("/register", registerUser);
@@ -30,5 +31,7 @@ router.get("/user-details/:id", protect, getUserDetails);
 router.get("/getlatestusers", protect, getLatestUsers);
 router.get("/getCountofallCollection", protect, getCountofallCollection);
 router.post("/paymentOfSubscription", protect, paymentOfSubscription);
+router.get("/getUserDetailsandCheckSubscrptionExpiry/:id", protect, getUserDetailsandCheckSubscrptionExpiry);
+
 
 export default router;

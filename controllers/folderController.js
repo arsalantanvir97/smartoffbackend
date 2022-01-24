@@ -71,12 +71,14 @@ const createFile = async (req, res) => {
 
 const getallfilesfolder = async (req, res) => {
   const { userid } = req.body;
-  console.log("req.body", req.body);
+  console.log("req.body userid", req.body);
 
   try {
     const file = await File.find({ userid: userid });
+    
     const folder = await Folder.find({ userid: userid });
     const userdata = [...file, ...folder];
+    console.log('userdata',userdata);
     res.status(201).json({
       userdata
     });
@@ -86,4 +88,26 @@ const getallfilesfolder = async (req, res) => {
     });
   }
 };
-export { createFolder, createFile, getallfilesfolder };
+
+
+const deleteFile = async (req, res) => {
+  try {
+    await File.findByIdAndRemove(req.params.id);
+    return res.status(201).json({ message: "File Deleted" });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+const deleteFolder = async (req, res) => {
+  try {
+    await Folder.findByIdAndRemove(req.params.id);
+    return res.status(201).json({ message: "Folder Deleted" });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+export { createFolder, createFile, getallfilesfolder ,deleteFile,deleteFolder};

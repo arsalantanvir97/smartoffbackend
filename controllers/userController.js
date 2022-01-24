@@ -69,8 +69,8 @@ const authUser = asyncHandler(async (req, res) => {
   console.log("authUser");
   const { email, password } = req.body;
 
-  const user = await User.findOne({ email }).populate('subscriptionid');
-  console.log('user',user)
+  const user = await User.findOne({ email }).populate("subscriptionid");
+  console.log("user", user);
   if (user && (await user.matchPassword(password))) {
     await res.status(200).json({
       _id: user._id,
@@ -141,7 +141,9 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({ message: "Invalid Recovery status" });
     else {
       console.log("resetexist");
-      const updateduser = await User.findOne({ email }).populate('subscriptionid');
+      const updateduser = await User.findOne({ email }).populate(
+        "subscriptionid"
+      );
       updateduser.password = password;
       await updateduser.save();
       console.log("updateduser", updateduser);
@@ -177,7 +179,7 @@ const editProfile = async (req, res) => {
     req.files.user_image[0] &&
     req.files.user_image[0].path;
   console.log("user_image", user_image);
-  const user = await User.findOne({ _id: id }).populate('subscriptionid');
+  const user = await User.findOne({ _id: id }).populate("subscriptionid");
   console.log("user", user);
   user.firstName = firstName ? firstName : user.firstName;
   user.lastName = lastName ? lastName : user.lastName;
@@ -203,7 +205,7 @@ const verifyAndREsetPassword = async (req, res) => {
     const { existingpassword, newpassword, confirm_password, email } = req.body;
 
     console.log("req.body", req.body);
-    const user = await User.findOne({ email }).populate('subscriptionid');;
+    const user = await User.findOne({ email }).populate("subscriptionid");
 
     if (user && (await user.matchPassword(existingpassword))) {
       console.log("block1");
@@ -304,7 +306,7 @@ const toggleActiveStatus = async (req, res) => {
 };
 const getUserDetails = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).populate('subscriptionid');;
+    const user = await User.findById(req.params.id).populate("subscriptionid");
     await res.status(201).json({
       user
     });
@@ -417,16 +419,47 @@ const getCountofallCollection = async (req, res) => {
 const paymentOfSubscription = async (req, res) => {
   const { id, subscription, userid } = req.body;
   try {
+    var now = new Date();
     const user = await User.findById({ _id: userid });
     console.log("user", user);
     user.subscriptionid = id;
     user.subscription = subscription;
+    user.expiryDate = new Date(
+      now.setDate(now.getDate() + subscription.duration)
+    );
+
     await user.save();
     await res.status(201).json({
       message: "Payment made Successfully"
     });
   } catch (err) {
     console.log("error", error);
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
+const getUserDetailsandCheckSubscrptionExpiry = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+      .populate("subscriptionid")
+      .lean()
+      .select("-password");
+    if (user.expiryDate) {
+      var date = moment(user.expiryDate);
+      var now = moment();
+      if (now > date) {
+        await User.updateOne(
+          { _id: req.params.id },
+          { $unset: { subscriptionid: "", subscription: "", expiryDate: "" } }
+        );
+      }
+    }
+    await res.status(201).json({
+      user
+    });
+  } catch (err) {
     res.status(500).json({
       message: err.toString()
     });
@@ -446,5 +479,6 @@ export {
   resetPassword,
   editProfile,
   verifyAndREsetPassword,
-  paymentOfSubscription
+  paymentOfSubscription,
+  getUserDetailsandCheckSubscrptionExpiry
 };

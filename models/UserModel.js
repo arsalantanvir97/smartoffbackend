@@ -21,6 +21,8 @@ const UserSchema = mongoose.Schema(
     },
     totalPrints: { type: Number, default: 0 },
     userImage: { type: String },
+    expiryDate: { type: Date },
+
     status: { type: Boolean, default: true },
     subscriptionid: {
       type: mongoose.Schema.Types.ObjectId,
