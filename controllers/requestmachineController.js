@@ -85,6 +85,7 @@ console.log('req.body',req.body)
           limit: req.query.perPage,
           lean: true,
           sort: "-_id",
+          populate:'vendorid branchid'
         }
       );
       await res.status(200).json({

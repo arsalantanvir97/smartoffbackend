@@ -248,7 +248,7 @@ const getVendorPrintlogs = async (req, res) => {
         }
       };
     console.log("dateFilter1", dateFilter);
-    console.log("61839400187a3d5113e4e218", req.query.id);
+    console.log("Mongoosereq.query.id", req.query.id);
     const print = await Print.paginate(
       {
         vendorid: Mongoose.mongo.ObjectId(req.query.id),

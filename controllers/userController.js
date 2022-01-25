@@ -18,6 +18,7 @@ import {
 } from "../queries";
 import Reset from "../models/ResetModel.js";
 import Mongoose from "mongoose";
+import RequestMachine from "../models/RequestMachineModel.js";
 const registerUser = async (req, res) => {
   const { firstName, confirmpassword, email, lastName, password } = req.body;
 
@@ -377,8 +378,8 @@ const getCountofallCollection = async (req, res) => {
         User.count(),
         Vendor.count(),
         Print.count(),
-        Printer.count(),
-        Printer.find(),
+        RequestMachine.count(),
+        RequestMachine.find().populate('vendorid branchid'),
         Print.aggregate([
           {
             $group: {
