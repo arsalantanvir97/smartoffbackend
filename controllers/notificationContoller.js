@@ -142,10 +142,60 @@ const vendorNotificationLogs = async (req, res) => {
   }
 };
 
+const usernotification = async (req, res) => {
+  try {
+    console.log(
+      "req.query.searchString",
+      req.query.searchString,
+      req.query.from
+    );
+    const searchParam = req.query.searchString
+      ? { $text: { $search: req.query.searchString } }
+      : {};
+    const status_filter = req.query.status ? { status: req.query.status } : {};
+    const from = req.query.from;
+    const to = req.query.to;
+    let dateFilter = {};
+    if (from && to)
+      dateFilter = {
+        createdAt: {
+          $gte: moment.utc(new Date(from)).startOf("day"),
+          $lte: moment.utc(new Date(to)).endOf("day")
+        }
+      };
+    console.log("dateFilter2", dateFilter);
+    console.log('req.params.id',req.params.id);
+    const notification = await Notification.paginate(
+      {'payload.id':req.params.id,
+        notificationType: "User",
+        ...searchParam,
+        ...status_filter,
+        ...dateFilter
+      },
+      {
+        page: req.query.page,
+        limit: req.query.perPage,
+        lean: true,
+        sort: "-_id"
+      }
+    );
+    await res.status(200).json({
+      notification
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
+
 export {
   getttingalltheNotification,
   getAllNotificationlogs,
   getSingleNotification,
   markallNotificationasRead,
-  vendorNotificationLogs
+  vendorNotificationLogs,
+  usernotification
 };

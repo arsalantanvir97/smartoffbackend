@@ -119,8 +119,8 @@ app.use(
     },
     {
       name: "doc_schedule",
-      maxCount: 1,
-    },
+      maxCount: 1
+    }
   ])
 );
 
@@ -137,7 +137,6 @@ app.use("/api/print", PrintRoutes);
 app.use("/api/notification", notificationRoutes);
 app.use("/api/Branch", BranchRoutes);
 app.use("/api/folder", folderRoutes);
-
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(__dirname + "/uploads"));

@@ -15,14 +15,15 @@ const createPrint = async (req, res) => {
     type,
     userid,
     userName,
-    requestformachine
+    requestformachine,
+    doc_schedule
   } = req.body;
   console.log("req.body", req.body);
-  let doc_schedule =
-  req.files &&
-  req.files.doc_schedule &&
-  req.files.doc_schedule[0] &&
-  req.files.doc_schedule[0].path;
+  // let doc_schedule =
+  // req.files &&
+  // req.files.doc_schedule &&
+  // req.files.doc_schedule[0] &&
+  // req.files.doc_schedule[0].path;
   const setting = await Setting.findOne();
   console.log("setting", setting);
   const adminComission = setting.comissonsetting;

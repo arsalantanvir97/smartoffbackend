@@ -417,6 +417,7 @@ const getCountofallCollection = async (req, res) => {
 };
 
 const paymentOfSubscription = async (req, res) => {
+
   const { id, subscription, userid } = req.body;
   try {
     var now = new Date();
@@ -429,6 +430,18 @@ const paymentOfSubscription = async (req, res) => {
     );
 
     await user.save();
+    const notification = {
+      notifiableId: userid,
+      notificationType: "User",
+      title: "Subscription",
+      body: `You have successfully subscribed to one of our package`,
+      payload: {
+        type: "Subscription",
+        id: userid
+      }
+    };
+    CreateNotification(notification);
+    console.log('paymentOfSubscription');
     await res.status(201).json({
       message: "Payment made Successfully"
     });

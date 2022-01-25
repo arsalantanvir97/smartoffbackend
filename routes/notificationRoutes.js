@@ -6,7 +6,8 @@ import {
   getAllNotificationlogs,
   getSingleNotification,
   markallNotificationasRead,
-  vendorNotificationLogs
+  vendorNotificationLogs,
+  usernotification
 } from "../controllers/notificationContoller";
 import { protect } from "../middlewares/authMiddleware";
 
@@ -17,6 +18,8 @@ router.get("/notificationlogs",protect,getAllNotificationlogs);
 router.get("/vendorNotificationLogs",protect,vendorNotificationLogs);
 
 router.get("/singlenotification/:id", protect,getSingleNotification);
+router.get("/usernotification/:id", protect,usernotification);
+
 router.get("/markallNotificationasRead",protect, markallNotificationasRead);
 
 
