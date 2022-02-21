@@ -49,7 +49,7 @@ const registerVendor = async (req, res) => {
   if (vendor) {
     const notification = {
       notifiableId: null,
-      notificationType: "Vendor",
+      notificationType: "Admin",
       title: `Vendor Created`,
       body: `A Vendor name ${firstName} has registered`,
       payload: {

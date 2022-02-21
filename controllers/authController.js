@@ -242,7 +242,7 @@ const registerUser = asyncHandler(async (req, res) => {
   if (user) {
     const notification = {
       notifiableId: null,
-      notificationType: "User",
+      notificationType: "Admin",
       title: "User Created",
       body: `A user name ${firstName} has registered on our Web`,
       payload: {
@@ -295,9 +295,9 @@ const registerVendor = asyncHandler(async (req, res) => {
   if (vendor) {
     const notification = {
       notifiableId: null,
-      notificationType: "Vendor",
+      notificationType: "Admin",
       title: "Vendor Created",
-      body: `A Vendor name ${firstName} has registered on our Web`,
+      body: `A Vendor named ${firstName} has registered on our Web`,
       payload: {
         type: "VENDOR",
         id: vendor._id,

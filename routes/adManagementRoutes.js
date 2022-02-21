@@ -3,7 +3,8 @@ const router = express.Router();
 
 import {
     createAdmanagement,Admanagementlogs,getAdmanagementDetails,setCostforAd,rejectAd,approveAd,
-    deleteAd,paymentofAd,updatestatus
+    deleteAd,paymentofAd,updatestatus,
+    getAdManagementCost
 } from "../controllers/admanagementcontroller";
 import { protect } from "../middlewares/authMiddleware";
 
@@ -16,6 +17,7 @@ router.post("/approveAd",protect,approveAd);
 router.get("/deleteAd/:id", protect, deleteAd);
 router.post("/paymentofAd",protect,paymentofAd);
 router.post("/updatestatus",protect,updatestatus);
+router.get("/getAdManagementCost",protect,getAdManagementCost);
 
 
 

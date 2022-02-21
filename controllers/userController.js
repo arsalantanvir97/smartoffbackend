@@ -19,6 +19,7 @@ import {
 import Reset from "../models/ResetModel.js";
 import Mongoose from "mongoose";
 import RequestMachine from "../models/RequestMachineModel.js";
+import Branch from "../models/BranchModel.js";
 const registerUser = async (req, res) => {
   const { firstName, confirmpassword, email, lastName, password } = req.body;
 
@@ -379,7 +380,7 @@ const getCountofallCollection = async (req, res) => {
         Vendor.count(),
         Print.count(),
         RequestMachine.count(),
-        RequestMachine.find().populate('vendorid branchid'),
+        Branch.find(),
         Print.aggregate([
           {
             $group: {
@@ -431,17 +432,7 @@ const paymentOfSubscription = async (req, res) => {
     );
 
     await user.save();
-    const notification = {
-      notifiableId: userid,
-      notificationType: "User",
-      title: "Subscription",
-      body: `You have successfully subscribed to one of our package`,
-      payload: {
-        type: "Subscription",
-        id: userid
-      }
-    };
-    CreateNotification(notification);
+ 
     console.log('paymentOfSubscription');
     await res.status(201).json({
       message: "Payment made Successfully"

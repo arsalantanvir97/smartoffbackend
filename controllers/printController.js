@@ -62,17 +62,17 @@ const createPrint = async (req, res) => {
     const printcreated = await print.save();
     console.log("printcreated", printcreated);
     if (printcreated) {
-      const notification = {
-        notifiableId: null,
-        notificationType: "Vendor",
-        title: "Print Created",
-        body: `A user name ${userName} has printed a document named ${documentname} consisting of ${pages} pages which cost is ${totalcost}`,
-        payload: {
-          type: "User",
-          id: userid
-        }
-      };
-      CreateNotification(notification);
+      // const notification = {
+      //   notifiableId: vendorid,
+      //   notificationType: "Vendor",
+      //   title: "Print Created",
+      //   body: `A user name ${userName} has printed a document named ${documentname} consisting of ${pages} pages whose cost is ${totalcost}`,
+      //   payload: {
+      //     type: "User",
+      //     id: userid
+      //   }
+      // };
+      // CreateNotification(notification);
 
       res.status(201).json({
         printcreated

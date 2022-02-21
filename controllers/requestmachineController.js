@@ -1,6 +1,7 @@
 import RequestMachine from "../models/RequestMachineModel";
 import moment from "moment";
 import CreateNotification from '../utills/notification.js'
+import Branch from "../models/BranchModel";
 const createRequestMachine = async (req, res) => {
     const { organizationName,
       numberOfMachineReq,
@@ -113,8 +114,10 @@ console.log('req.body',req.body)
   const getRequestMachinebyVendorid = async (req, res) => {
     const { 
       vendorid } = req.body;
+      console.log('getRequestMachinebyVendoridvendorid',vendorid)
     try {
-      const requestmachine = await RequestMachine.find({vendorid:vendorid}).populate('vendorid branchid');
+      const requestmachine = await Branch.find({vendorid:vendorid})
+      console.log('getRequestMachinebyVendorid',requestmachine)
       await res.status(201).json({
         requestmachine,
       });

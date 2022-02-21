@@ -33,7 +33,7 @@ const createBranch = async (req, res) => {
     if (branchcreated) {
       const notification = {
         notifiableId: null,
-        notificationType: "Branch",
+        notificationType: "Admin",
         title: "Branch Created",
         body: `Branch created by a vendor having id of${vendorid} `,
         payload: {
@@ -134,9 +134,11 @@ const getBranchDetails = async (req, res) => {
         city,
         zipcode,
         address,
+        geolocation,
         vendorid } = req.body;
     console.log("req.body", req.body);
-  
+    console.log( geolocation ? 'yes' : 'no');
+
     const branch = await Branch.findOne({ _id: id });
     console.log("branch", branch);
     branch.branchName = branchName ? branchName : branch.branchName;
@@ -144,7 +146,8 @@ const getBranchDetails = async (req, res) => {
     branch.city = city ? city : branch.city;
     branch.zipcode = zipcode ? zipcode : branch.zipcode;
     branch.address = address ? address : branch.address;
-
+    branch.geolocation = geolocation ? geolocation : branch.geolocation;
+    
     console.log("block1");
    
   

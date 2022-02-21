@@ -19,17 +19,7 @@ const createFolder = async (req, res) => {
     const foldercreated = await folder.save();
     console.log("foldercreated", foldercreated);
     if (foldercreated) {
-      const notification = {
-        notifiableId: null,
-        notificationType: "Admin",
-        title: "Folder Created",
-        body: `A folder name ${folderName} has been created by user having id of ${userid}`,
-        payload: {
-          type: "User",
-          id: userid
-        }
-      };
-      CreateNotification(notification);
+   
 
       res.status(201).json({
         foldercreated

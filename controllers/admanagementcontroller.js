@@ -222,9 +222,25 @@ const updatestatus = async (req, res) => {
     });
   }
 };
+const getAdManagementCost = async (req, res) => {
+
+  try {
+    const admanagement = await AdManagementCostModel.findOne( );
+  
+    await res.status(201).json({
+      admanagement
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
 
 export {
   createAdmanagement,
+  getAdManagementCost,
   Admanagementlogs,
   getAdmanagementDetails,
   setCostforAd,
