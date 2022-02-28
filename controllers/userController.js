@@ -154,8 +154,8 @@ const resetPassword = async (req, res) => {
         firstName: updateduser.firstName,
         lastName: updateduser.lastName,
         userImage: updateduser.userImage,
-        subscription: user.subscription,
-        subscriptionid: user.subscriptionid,
+        subscription: updateduser.subscription,
+        subscriptionid: updateduser.subscriptionid,
         email: updateduser.email,
         token: generateToken(updateduser._id)
       });
@@ -380,7 +380,7 @@ const getCountofallCollection = async (req, res) => {
         Vendor.count(),
         Print.count(),
         RequestMachine.count(),
-        Branch.find(),
+        RequestMachine.find().populate('vendorid branchid'),
         Print.aggregate([
           {
             $group: {

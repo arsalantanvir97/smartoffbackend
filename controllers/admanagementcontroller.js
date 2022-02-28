@@ -3,6 +3,7 @@ import moment from "moment";
 import CreateNotification from "../utills/notification.js";
 import AdManagementCostModel from "../models/AdManagementCostModel";
 import ExpiryDate from "../services/expiry_date";
+import Mongoose from "mongoose";
 const createAdmanagement = async (req, res) => {
   const { vendorid, link, message } = req.body;
   console.log("req.body", req.files);
@@ -80,6 +81,58 @@ const Admanagementlogs = async (req, res) => {
 
     const admanagement = await AdmanagementModel.paginate(
       {
+        ...searchParam,
+        ...status_filter,
+        ...dateFilter
+      },
+      {
+        page: req.query.page,
+        limit: req.query.perPage,
+        lean: true,
+        sort: "-_id",
+        populate: "vendorid"
+      }
+    );
+    await res.status(200).json({
+      admanagement
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+const vendoradmanagementlogs = async (req, res) => {
+  try {
+    ExpiryDate();
+    console.log("req.query.searchString", req.query.searchString);
+    const searchParam = req.query.searchString
+      ? // { $text: { $search: req.query.searchString } }
+        {
+          $or: [
+            {
+              firstName: { $regex: `${req.query.searchString}`, $options: "i" }
+            },
+            { lastName: { $regex: `${req.query.searchString}`, $options: "i" } }
+          ]
+        }
+      : {};
+    console.log("req.query.status", req.query.status);
+    const status_filter = req.query.status ? { status: req.query.status } : {};
+    const from = req.query.from;
+    const to = req.query.to;
+    let dateFilter = {};
+    if (from && to)
+      dateFilter = {
+        createdAt: {
+          $gte: moment.utc(new Date(from)).startOf("day"),
+          $lte: moment.utc(new Date(to)).endOf("day")
+        }
+      };
+console.log(req.query.vendorid)
+    const admanagement = await AdmanagementModel.paginate(
+      {  vendorid: Mongoose.mongo.ObjectId(req.query.vendorid),
         ...searchParam,
         ...status_filter,
         ...dateFilter
@@ -248,5 +301,6 @@ export {
   approveAd,
   deleteAd,
   paymentofAd,
-  updatestatus
+  updatestatus,
+  vendoradmanagementlogs
 };

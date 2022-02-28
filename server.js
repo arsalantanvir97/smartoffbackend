@@ -33,7 +33,7 @@ dotenv.config();
 const PORT = 5051;
 
 // SSL Configuration
-const local = false;
+const local = true;
 let credentials = {};
 
 if (local) {

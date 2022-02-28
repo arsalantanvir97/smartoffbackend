@@ -116,7 +116,7 @@ console.log('req.body',req.body)
       vendorid } = req.body;
       console.log('getRequestMachinebyVendoridvendorid',vendorid)
     try {
-      const requestmachine = await Branch.find({vendorid:vendorid})
+      const requestmachine = await RequestMachine.find({vendorid:vendorid}).populate('vendorid branchid');
       console.log('getRequestMachinebyVendorid',requestmachine)
       await res.status(201).json({
         requestmachine,
