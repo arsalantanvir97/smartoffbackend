@@ -22,19 +22,42 @@ const UserSchema = mongoose.Schema(
     totalPrints: { type: Number, default: 0 },
     userImage: { type: String },
     expiryDate: { type: Date },
-
+    paymentResult: { type: Object },
     status: { type: Boolean, default: true },
     subscriptionid: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Subscription"
     },
-    subscription: { type: Object }
+    subscription: { type: Object },
+    is_recurring:{type:Boolean},
+    mobile_number: { type: String },
+    country_code: { type: String },
+    location: {
+      type: {
+        type: String, // Don't do `{ location: { type: String } }`
+        enum: ["Point"] // 'location.type' must be 'Point'
+      },
+      coordinates: {
+        type: [Number],
+        index: "2dsphere"
+      }
+    },
+    googleId: {
+      type: String
+    },
+    facebookId: {
+      type: String
+    },
+    appleId: {
+      type: String,
+      default: null
+    }
   },
   {
     timestamps: true
   }
 );
-
+UserSchema.index({ location: "2dsphere" });
 UserSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };

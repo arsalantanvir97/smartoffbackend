@@ -1,10 +1,26 @@
 import Reset from '../models/ResetModel'
+import OTP from '../models/OTPModel'
+
 import bcrypt from 'bcryptjs'
 const createResetToken = async (email, code) => {
     const token = await Reset.findOne({ email });
     if (token) await token.remove();
     const newToken = new Reset({
       email,
+      code,
+    });
+    console.log('newToken',newToken)
+    await newToken.save();
+  };
+  
+  const createOTPToken = async (country_code,
+    mobile_number, code) => {
+    const token = await OTP.findOne({ country_code,
+      mobile_number });
+    if (token) await token.remove();
+    const newToken = new OTP({
+      country_code,
+      mobile_number,
       code,
     });
     console.log('newToken',newToken)
@@ -17,4 +33,4 @@ const createResetToken = async (email, code) => {
   const generateHash = async (string) => await bcrypt.hash(string, 12);
 
 
-  export{createResetToken,verifyPassword,comparePassword,generateHash}
+  export{createResetToken,verifyPassword,comparePassword,generateHash,createOTPToken}

@@ -8,7 +8,8 @@ import {
   getAllPrintlogs,
   getVendorPrintlogs,
   paidStatusVendorPrintlogs,
-  getLatestPrintsofVendor
+  getLatestPrintsofVendor,
+  printFile
 } from "../controllers/printController";
 import { protect } from "../middlewares/authMiddleware";
 
@@ -23,5 +24,6 @@ router.get(
 );
 router.get("/print-details/:id", protect, getPrintDetails);
 router.get("/getLatestPrintsofVendor/:id", protect, getLatestPrintsofVendor);
+router.post("/printFile", protect, printFile);
 
 export default router;

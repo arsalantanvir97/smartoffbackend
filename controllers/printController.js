@@ -3,7 +3,7 @@ import Setting from "../models/SettingsModel.js";
 import User from "../models/UserModel.js";
 import CreateNotification from "../utills/notification.js";
 import Mongoose from "mongoose";
-
+import RequestMachine from "../models/RequestMachineModel.js";
 import moment from "moment";
 import Vendor from "../models/VendorModel.js";
 
@@ -84,27 +84,92 @@ const createPrint = async (req, res) => {
     });
   }
 };
+const printFile = async (req, res) => {
+  const {
+    requestformachineid,
+    file_id,
+    pages,
+    type,
+    card_holder_name,
+    card_number,
+    cvv
+  } = req.body;
+  console.log("req.body", req.body);
+ 
+  const reqmachine = await RequestMachine.findOne({ _id: requestformachineid });
+
+  requestformachineid;
+  const setting = await Setting.findOne();
+  console.log("setting", setting);
+  const adminComission = setting.comissonsetting;
+  const costperpage =
+    type == "Color" ? setting.costforcolor : setting.costforblackandwhite;
+  console.log("costperpage", costperpage, typeof costperpage);
+  const totalcost = costperpage * pages;
+  console.log("totalcost", totalcost);
+  const filee = await File.findOne({ _id: file_id });
+
+  try {
+    const user = await User.findById({ _id: req.id });
+    console.log("user", user);
+    const updateuser = await User.findByIdAndUpdate(
+      { _id: req.id },
+      { totalPrints: user.totalPrints + 1 },
+      { new: true, upsert: true }
+    ).exec();
+    const print = new Print({
+      vendorid: reqmachine.vendorid, //missing
+      doc: filee.docfile, //missing
+      documentname: filee.docfile, //missing
+      pages,
+      paymentResult: { card_holder_name, card_number, cvv },
+      adminComission,
+      requestformachine: reqmachine._id, //missing
+      type,
+      userid: req.id,
+      userName: user.firstName,
+      costperpage,
+      totalcost
+    });
+    console.log("print", print);
+
+    
+    const printcreated = await print.save();
+    console.log("printcreated", printcreated);
+    if (printcreated) {
+   
+
+      res.status(201).json({
+        printcreated
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
 
 const Printlogs = async (req, res) => {
   console.log("Printlogs", req.params.id, new Date(req.query.from));
   try {
     console.log("req.query.searchString", req.query.searchString);
     const searchParam = req.query.searchString
-    ? // { $text: { $search: req.query.searchString } }
-      {
-        $or: [
-          {
-            userName: { $regex: `${req.query.searchString}`, $options: "i" }
-          },
-          {
-            documentname: {
-              $regex: `${req.query.searchString}`,
-              $options: "i"
+      ? // { $text: { $search: req.query.searchString } }
+        {
+          $or: [
+            {
+              userName: { $regex: `${req.query.searchString}`, $options: "i" }
+            },
+            {
+              documentname: {
+                $regex: `${req.query.searchString}`,
+                $options: "i"
+              }
             }
-          }
-        ]
-      }
-    : {};
+          ]
+        }
+      : {};
     const status_filter = req.query.status ? { status: req.query.status } : {};
     const from = req.query.from;
     const to = req.query.to;
@@ -392,5 +457,6 @@ export {
   getAllPrintlogs,
   getVendorPrintlogs,
   paidStatusVendorPrintlogs,
-  getLatestPrintsofVendor
+  getLatestPrintsofVendor,
+  printFile
 };

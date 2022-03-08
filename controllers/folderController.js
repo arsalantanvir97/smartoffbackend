@@ -19,8 +19,6 @@ const createFolder = async (req, res) => {
     const foldercreated = await folder.save();
     console.log("foldercreated", foldercreated);
     if (foldercreated) {
-   
-
       res.status(201).json({
         foldercreated
       });
@@ -135,6 +133,39 @@ const uploadFilesinFolder = async (req, res) => {
     });
   }
 };
+const editFolder = async (req, res) => {
+  const { folder_id, name } = req.body;
+  console.log("req.body folderid", req.body);
+
+  try {
+    const folder = await Folder.findOne({ _id: folder_id });
+    folder.folderName = name;
+    const updatedfolder = await folder.save();
+    res.status(201).json({
+      updatedfolder
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+const recentFiles = async (req, res) => {
+
+
+  try {
+    const file = await File.find({ userid: req.id }).sort({$natural: -1}).limit(5);
+  
+    res.status(201).json({
+      file
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
 
 const deleteFileinFolder = async (req, res) => {
   const { index } = req.body;
@@ -154,16 +185,19 @@ const deleteFileinFolder = async (req, res) => {
   }
 };
 const searchbyFileName = async (req, res) => {
-  const { searchString,userid } = req.body;
+  const { searchString, userid } = req.body;
   console.log("req.body index", req.body);
   try {
-    const file = await File.find({userid: userid, 'docfile': {'$regex': searchString}})
+    const file = await File.find({
+      userid: userid,
+      docfile: { $regex: searchString }
+    });
 
     const folder = await Folder.find({ userid: userid });
     const userdata = [...file, ...folder];
 
     console.log("userdata", userdata);
-  
+
     res.status(201).json({
       userdata
     });
@@ -175,12 +209,15 @@ const searchbyFileName = async (req, res) => {
 };
 
 const searchFilesinFolder = async (req, res) => {
-  const { searchString,folderid } = req.body;
+  const { searchString, folderid } = req.body;
   console.log("req.body index", req.body);
   try {
-    const folder = await Folder.findOne({_id:folderid,'fileArr': {'$regex': searchString} })
-  console.log('folder',folder);
-  
+    const folder = await Folder.findOne({
+      _id: folderid,
+      fileArr: { $regex: searchString }
+    });
+    console.log("folder", folder);
+
     res.status(201).json({
       folder
     });
@@ -201,5 +238,7 @@ export {
   uploadFilesinFolder,
   deleteFileinFolder,
   searchbyFileName,
-  searchFilesinFolder
+  searchFilesinFolder,
+  editFolder,
+  recentFiles
 };

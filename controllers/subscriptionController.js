@@ -1,90 +1,139 @@
 import Subscription from "../models/SubscriptionModel.js";
 import moment from "moment";
-import CreateNotification from '../utills/notification.js'
+import CreateNotification from "../utills/notification.js";
+import User from "../models/UserModel.js";
 
-const createSubscription  = async (req, res) => {
-    const { packagename,duration, amount,Features,status } = req.body;
-console.log('req.body',req.body)
-    try {
-      const subscription =new Subscription ({
-        packagename,duration, amount,Features,status}
-      )
-      console.log('subscription',subscription)
+const createSubscription = async (req, res) => {
+  const { packagename, duration, amount, Features, status } = req.body;
+  console.log("req.body", req.body);
+  try {
+    const subscription = new Subscription({
+      packagename,
+      duration,
+      amount,
+      Features,
+      status
+    });
+    console.log("subscription", subscription);
     //   const feedbackcreated = await Feedback.create(
     //     feedback
     //   );
     //   console.log('feedbackcreated',feedbackcreated)
-    const allOfSubscriptions=await subscription.save()
-    console.log('allOfSubscriptions',allOfSubscriptions)
-      if (allOfSubscriptions) {
-        res.status(201).json({
-            allOfSubscriptions
-        });
-    } }catch (err) {
-      res.status(500).json({
-        message: err.toString(),
+    const allOfSubscriptions = await subscription.save();
+    console.log("allOfSubscriptions", allOfSubscriptions);
+    if (allOfSubscriptions) {
+      res.status(201).json({
+        allOfSubscriptions
       });
     }
-  };
-  const allOfSubscription  = async (req, res) => {
-  
-    try {
-        const getAllSubscriptions=await Subscription.find()
-        console.log('getAllSubscriptions',getAllSubscriptions)
-        if (getAllSubscriptions) {
-         res.status(201).json({
-             getAllSubscriptions
-         });}
-      }catch (err) {
-      res.status(500).json({
-        message: err.toString(),
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+const allOfSubscription = async (req, res) => {
+  try {
+    const getAllSubscriptions = await Subscription.find();
+    console.log("getAllSubscriptions", getAllSubscriptions);
+    if (getAllSubscriptions) {
+      res.status(201).json({
+        getAllSubscriptions
       });
     }
-  };
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
 
-  const getSingleSubscription = async (req, res) => {
-    try {
-      const subscription = await Subscription.findById(req.params.id)
-      await res.status(201).json({
-        subscription,
-      });
-    } catch (err) {
-      res.status(500).json({
-        message: err.toString(),
-      });
-    }
-  };
+const getSingleSubscription = async (req, res) => {
+  try {
+    const subscription = await Subscription.findById(req.params.id);
+    await res.status(201).json({
+      subscription
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
 
-  const updateSubscription = (async (req, res) => {
-    const {
-        id,
-        packagename,
-        duration,
-        cost,
-        status,
-    } = req.body
-  console.log('req.body',req.body)
-    const subscription = await Subscription.findByIdAndUpdate({_id:id}, { packagename: packagename, duration: duration,amount:cost,status:status }, { new: true });
- 
-    if (subscription) {
-console.log('subscriptionsubscription')
-      const notification = {
-        notifiableId: null,
-        notificationType: "Vendor",
-        title: "Subscription Updated",
-        body: `${packagename} package name cost:${cost},duration:${duration} updated `,
-        payload: {
-          type: "Admin",
-          id: id,
-        },
-      };
-      CreateNotification(notification);
+const updateSubscription = async (req, res) => {
+  const { id, packagename, duration, cost, status } = req.body;
+  console.log("req.body", req.body);
+  const subscription = await Subscription.findByIdAndUpdate(
+    { _id: id },
+    {
+      packagename: packagename,
+      duration: duration,
+      amount: cost,
+      status: status
+    },
+    { new: true }
+  );
 
-      res.json(subscription)
-    } else {
-      res.status(404)
-      throw new Error('subscription not found')
-    }
-  })
+  if (subscription) {
+    console.log("subscriptionsubscription");
+    const notification = {
+      notifiableId: null,
+      notificationType: "Vendor",
+      title: "Subscription Updated",
+      body: `${packagename} package name cost:${cost},duration:${duration} updated `,
+      payload: {
+        type: "Admin",
+        id: id
+      }
+    };
+    CreateNotification(notification);
 
-  export { createSubscription,allOfSubscription,getSingleSubscription,updateSubscription}
+    res.json(subscription);
+  } else {
+    res.status(404);
+    throw new Error("subscription not found");
+  }
+};
+const subscriptionPayment = async (req, res) => {
+  const {
+    subscription_id,
+    card_holder_name,
+    card_number,
+    cvv,
+    userid,
+    is_recurring
+  } = req.body;
+  try {
+    var now = new Date();
+    const user = await User.findById({ _id: userid });
+    const subscriptionn=await Subscription.findOne({_id:subscription_id})
+    console.log("user", user);
+    user.subscriptionid = subscription_id;
+    user.subscription = subscriptionn;
+    user.is_recurring=is_recurring
+    user.paymentResult={card_holder_name,card_number,cvv}
+    user.expiryDate = new Date(
+      now.setDate(now.getDate() + subscriptionn.duration)
+    );
+
+    await user.save();
+
+    console.log("paymentOfSubscription");
+    await res.status(201).json({
+      message: "Congratulations! You have successfully subscribed to our package"
+    });
+  } catch (err) {
+    console.log("error", error);
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+export {
+  createSubscription,
+  allOfSubscription,
+  getSingleSubscription,
+  updateSubscription,
+  subscriptionPayment
+};

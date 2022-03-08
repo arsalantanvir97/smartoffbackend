@@ -15,9 +15,18 @@ import {
   editProfile,
   verifyAndREsetPassword,
   paymentOfSubscription,
-  getUserDetailsandCheckSubscrptionExpiry
+  getUserDetailsandCheckSubscrptionExpiry,
+  login,
+  Singup,
+  forgotPassword,
+  verifyCode,
+  SocialLogin,
+  updatePassword,
+  updateProfile,
+  cancelationOfSubscription
 } from "../controllers/userController.js";
 import { protect } from "../middlewares/authMiddleware";
+
 router.post("/register", registerUser);
 router.post("/authUser", authUser);
 router.post("/userverifyRecoverCode", verifyRecoverCode);
@@ -31,7 +40,19 @@ router.get("/user-details/:id", protect, getUserDetails);
 router.get("/getlatestusers", protect, getLatestUsers);
 router.get("/getCountofallCollection", protect, getCountofallCollection);
 router.post("/paymentOfSubscription", protect, paymentOfSubscription);
-router.get("/getUserDetailsandCheckSubscrptionExpiry/:id", protect, getUserDetailsandCheckSubscrptionExpiry);
+router.get(
+  "/getUserDetailsandCheckSubscrptionExpiry/:id",
+  protect,
+  getUserDetailsandCheckSubscrptionExpiry
+);
+router.post("/login", login);
+router.post("/singup", Singup);
+router.post("/forgotPassword", forgotPassword);
+router.post("/verifyCode", verifyCode);
+router.post("/SocialLogin", SocialLogin);
+router.post("/updatePassword",protect, updatePassword);
+router.post("/updateProfile",protect, updateProfile);
+router.post("/cancelationOfSubscription", protect,cancelationOfSubscription);
 
 
 export default router;

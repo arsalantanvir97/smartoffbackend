@@ -6,11 +6,9 @@ import multer from "multer";
 import logger from "morgan";
 import https from "https";
 import fs from "fs";
-
 import connectDB from "./config/db.js";
 import { fileFilter, fileStorage } from "./multer";
 import { v4 as uuidv4 } from "uuid";
-
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import vendorRoutes from "./routes/vendorRoutes.js";
@@ -21,9 +19,13 @@ import SubscriptionRoutes from "./routes/subscriptionRoutes";
 import SettingRoutes from "./routes/settingRoutes";
 import PrinterRoutes from "./routes/printerRoutes";
 import PrintRoutes from "./routes/printRoutes";
-import notificationRoutes from "./routes//notificationRoutes";
-import BranchRoutes from "./routes//BranchRoutes";
-import folderRoutes from "./routes//folderRoutes";
+import notificationRoutes from "./routes/notificationRoutes";
+import BranchRoutes from "./routes/BranchRoutes";
+import folderRoutes from "./routes/folderRoutes";
+import userguideRoutes from "./routes/userguideRoutes";
+import homepageRoutes from "./routes/homepageRoutes";
+import homeDataRoutes from "./routes/homeDataRoutes";
+import policyterms from "./routes/policytermsRoutes";
 
 import Stripe from "stripe";
 const stripe = Stripe("sk_test_OVw01bpmRN2wBK2ggwaPwC5500SKtEYy9V");
@@ -33,7 +35,7 @@ dotenv.config();
 const PORT = 5051;
 
 // SSL Configuration
-const local = false;
+const local = true;
 let credentials = {};
 
 if (local) {
@@ -137,6 +139,10 @@ app.use("/api/print", PrintRoutes);
 app.use("/api/notification", notificationRoutes);
 app.use("/api/Branch", BranchRoutes);
 app.use("/api/folder", folderRoutes);
+app.use("/api/userguide", userguideRoutes);
+app.use("/api/homepage", homepageRoutes);
+app.use("/api/homeDataRoutes", homeDataRoutes);
+app.use("/api/policyterms", policyterms);
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(__dirname + "/uploads"));
