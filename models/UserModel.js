@@ -12,12 +12,10 @@ const UserSchema = mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
       unique: true
     },
     password: {
       type: String,
-      required: true
     },
     totalPrints: { type: Number, default: 0 },
     userImage: { type: String },
@@ -30,7 +28,7 @@ const UserSchema = mongoose.Schema(
     },
     subscription: { type: Object },
     is_recurring:{type:Boolean},
-    mobile_number: { type: String },
+    mobile_number: { type: String,unique:true },
     country_code: { type: String },
     location: {
       type: {

@@ -50,7 +50,7 @@ router.post("/singup", Singup);
 router.post("/forgotPassword", forgotPassword);
 router.post("/verifyCode", verifyCode);
 router.post("/SocialLogin", SocialLogin);
-router.post("/updatePassword",protect, updatePassword);
+router.post("/updatePassword", updatePassword);
 router.post("/updateProfile",protect, updateProfile);
 router.post("/cancelationOfSubscription", protect,cancelationOfSubscription);
 

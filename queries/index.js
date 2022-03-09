@@ -13,8 +13,7 @@ const createResetToken = async (email, code) => {
     await newToken.save();
   };
   
-  const createOTPToken = async (country_code,
-    mobile_number, code) => {
+  const createOTPToken = async (mobile_number, country_code, code) => {
     const token = await OTP.findOne({ country_code,
       mobile_number });
     if (token) await token.remove();

@@ -98,7 +98,6 @@ const printFile = async (req, res) => {
  
   const reqmachine = await RequestMachine.findOne({ _id: requestformachineid });
 
-  requestformachineid;
   const setting = await Setting.findOne();
   console.log("setting", setting);
   const adminComission = setting.comissonsetting;

@@ -14,7 +14,8 @@ import {
   createResetToken,
   verifyPassword,
   comparePassword,
-  generateHash
+  generateHash,
+  createOTPToken
 } from "../queries";
 import Reset from "../models/ResetModel.js";
 import Mongoose from "mongoose";
@@ -234,6 +235,8 @@ const verifyAndREsetPassword = async (req, res) => {
           email: user.email,
           lastName: user.lastName,
           subscription: user.subscription,
+          country_code: user.country_code,
+          mobile_number: user.mobile_number,
           subscriptionid: user.subscriptionid,
           userImage: user.userImage,
           token: generateToken(user._id)
@@ -454,9 +457,9 @@ const paymentOfSubscription = async (req, res) => {
 };
 
 const cancelationOfSubscription = async (req, res) => {
-  const { userid } = req.body;
+ 
   try {
-    const user = await User.findById({ _id: userid });
+    const user = await User.findById({ _id: req.id });
     console.log("user", user);
     user.subscriptionid = undefined;
     user.subscription = undefined;
@@ -861,7 +864,6 @@ const verifyCode = async (req, res) => {
   const { code } = req.body;
   console.log("req.body", req.body);
   const reset = await OTP.findOne({ code });
-
   if (reset)
     return res.status(200).json({ message: "Recovery status Accepted" });
   else {
@@ -884,7 +886,7 @@ const updatePassword = async (req, res) => {
       return res.status(400).json({ message: "Invalid Recovery status" });
     else {
       console.log("resetexist");
-      const updateduser = await User.findOne({ email }).populate(
+      const updateduser = await User.findOne({ mobile_number, country_code }).populate(
         "subscriptionid"
       );
       updateduser.password = password;

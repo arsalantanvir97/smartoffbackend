@@ -8,7 +8,7 @@ import {
 
 import { protect } from "../middlewares/authMiddleware";
 
-router.post("/createUserGuide", createUserGuide);
-router.get("/userGuide", getallUserGuide);
+router.post("/createUserGuide", protect,createUserGuide);
+router.get("/userGuide", protect,getallUserGuide);
 
 export default router;
