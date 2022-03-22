@@ -843,7 +843,7 @@ const Singup = async (req, res) => {
 };
 
 const forgotPassword = async (req, res) => {
-  const {email, mobile_number, country_code } = req.body;
+  const {email, mobile_number, country_code, } = req.body;
 try {
   const user = await User.findOne({ mobile_number, country_code });
   if (!user) {
@@ -853,7 +853,7 @@ try {
     });
   } else {
     const status = generateCode();
-    await createOTPToken(mobile_number, country_code, status);
+    await createOTPToken(mobile_number, country_code, status,email);
 
     const html = `<p>You are receiving this because you (or someone else) have requested the reset of the password for your account.
           \n\n Your verification status is ${status}:\n\n
