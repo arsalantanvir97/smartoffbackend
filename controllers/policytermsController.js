@@ -72,6 +72,39 @@ const privacyPolicy = async (req, res) => {
       });
     }
   };
+  const updatetermsConditions = async (req, res) => {
+    const { text } = req.body;
+
+    try {
+    const termscondition=await TermsCondition.findOne()
+    termscondition.details=text
+   const updatedtermscondition= await termscondition.save()
+        res.status(201).json({
+          updatedtermscondition
+        });
+      
+    } catch (err) {
+      res.status(500).json({
+        message: err.toString()
+      });
+    }
+  };
+  const updateprivacyPolicy = async (req, res) => {
+    const { text } = req.body;
+
+    try {
+    const privacypolicy=await PrivacyPolicy.findOne()
+    privacypolicy.details=text
+   const updatedprivacypolicy= await privacypolicy.save()
+        res.status(201).json({
+          updatedprivacypolicy
+        });
+      
+    } catch (err) {
+      res.status(500).json({
+        message: err.toString()
+      });
+    }
+  };
   
-  
-export { createprivacyPolicy, createTermsCondition,privacyPolicy,termsConditions };
+export { createprivacyPolicy, createTermsCondition,privacyPolicy,termsConditions,updatetermsConditions,updateprivacyPolicy };

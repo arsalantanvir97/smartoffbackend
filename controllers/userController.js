@@ -887,12 +887,12 @@ const updatePassword = async (req, res) => {
   try {
     console.log("reset");
 
-    const { password, confirm_password, code, mobile_number, country_code } =
+    const { password, confirm_password, code, mobile_number, country_code ,email} =
       req.body;
     console.log("req.body", req.body);
     if (!comparePassword(password, confirm_password))
       return res.status(400).json({ message: "Password does not match" });
-    const reset = await OTP.findOne({ mobile_number, country_code, code });
+    const reset = await OTP.findOne({ mobile_number, country_code, code ,email});
     console.log("reset", reset);
     if (!reset)
       return res.status(400).json({ message: "Invalid Recovery status" });
@@ -901,6 +901,7 @@ const updatePassword = async (req, res) => {
       const updateduser = await User.findOne({ mobile_number, country_code }).populate(
         "subscriptionid"
       );
+      console.log('updateduser',updateduser,updateduser.password,password)
       updateduser.password = password;
       await updateduser.save();
       console.log("updateduser", updateduser);
