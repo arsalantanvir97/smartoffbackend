@@ -2,14 +2,11 @@ import mongoose from "mongoose";
 
 const OTPSchema = mongoose.Schema(
   {
-    country_code: {
-      type: String,
-      required: true,
-    },
+   
     email: {
       type: String,
       required: true,
-      unique: true
+      unique:true
     },
     mobile_number: {
       type: String,

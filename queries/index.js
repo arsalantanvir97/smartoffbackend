@@ -13,18 +13,19 @@ const createResetToken = async (email, code) => {
     await newToken.save();
   };
   
-  const createOTPToken = async (mobile_number, country_code, code,email) => {
-    const token = await OTP.findOne({ country_code,email,
+  const createOTPToken = async (mobile_number, code,email) => {
+    const token = await OTP.findOne({ email,
       mobile_number });
+      console.log('token',token)
     if (token) await token.remove();
     const newToken = new OTP({
-      country_code,
       mobile_number,
       code,
       email
     });
     console.log('newToken',newToken)
     await newToken.save();
+
   };
   const verifyPassword = async (password_to_comapre, password_base) =>
   await bcrypt.compare(password_to_comapre, password_base);

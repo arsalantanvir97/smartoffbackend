@@ -750,7 +750,7 @@ const SocialLogin = async (req, res) => {
 const login = asyncHandler(async (req, res) => {
   console.log("authUser");
   const { email, password, deviceId,device_type } = req.body;
-
+try {
   const user = await User.findOne({ email }).populate("subscriptionid");
   console.log("user", user);
   if (user && (await user.matchPassword(password))) {
@@ -775,10 +775,16 @@ const login = asyncHandler(async (req, res) => {
     });
   } else {
     console.log("error");
-    return res.status(201).json({
+     res.status(201).json({
       message: "Invalid Email or Password"
     });
   }
+} catch (error) {
+  res.status(201).json({
+    message: error
+  });
+}
+  
 });
 
 const Singup = async (req, res) => {
@@ -892,7 +898,7 @@ const updatePassword = async (req, res) => {
     console.log("req.body", req.body);
     if (!comparePassword(password, confirm_password))
       return res.status(400).json({ message: "Password does not match" });
-    const reset = await OTP.findOne({ mobile_number, country_code, code ,email});
+    const reset = await OTP.findOne({ mobile_number, code ,email});
     console.log("reset", reset);
     if (!reset)
       return res.status(400).json({ message: "Invalid Recovery status" });
