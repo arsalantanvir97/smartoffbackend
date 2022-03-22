@@ -5,7 +5,7 @@ import User from "../models/UserModel.js";
 
 const createSubscription = async (req, res) => {
   const { packagename, duration, amount, Features, status } = req.body;
-  console.log("req.body", req.body);
+  console.log("req.bodycreateSubscription", req.body);
   try {
     const subscription = new Subscription({
       packagename,
@@ -62,12 +62,13 @@ const getSingleSubscription = async (req, res) => {
 };
 
 const updateSubscription = async (req, res) => {
-  const { id, packagename, duration, cost, status } = req.body;
+  const { id, packagename, duration, cost, status ,Features} = req.body;
   console.log("req.body", req.body);
   const subscription = await Subscription.findByIdAndUpdate(
     { _id: id },
     {
       packagename: packagename,
+      Features,
       duration: duration,
       amount: cost,
       status: status

@@ -357,7 +357,8 @@ const getCountofallCollection = async (req, res) => {
           createdAt: {
             $gte: start_date,
             $lte: end_date
-          }
+          },
+          paid:true
         }
       },
       {
@@ -394,6 +395,12 @@ const getCountofallCollection = async (req, res) => {
         RequestMachine.count(),
         RequestMachine.find().populate("vendorid branchid"),
         Print.aggregate([
+          {
+            $match: {
+             
+              paid: true
+            }
+          },
           {
             $group: {
               _id: 1,
@@ -836,8 +843,8 @@ const Singup = async (req, res) => {
 };
 
 const forgotPassword = async (req, res) => {
-  const { mobile_number, country_code } = req.body;
-
+  const {email, mobile_number, country_code } = req.body;
+try {
   const user = await User.findOne({ mobile_number, country_code });
   if (!user) {
     console.log("!user");
@@ -858,6 +865,11 @@ const forgotPassword = async (req, res) => {
         "Recovery status Has Been Emailed To Your Registered Email Address"
     });
   }
+} catch (error) {
+  console.log("error", error);
+  return res.status(400).json({ message: error.toString() });
+}
+  
 };
 
 const verifyCode = async (req, res) => {

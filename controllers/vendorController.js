@@ -300,7 +300,20 @@ const Vendorlogs = async (req, res) => {
       message: err.toString()
     });
   }
+}; const allvendors = async (req, res) => {
+  try {
+    const vendors = await Vendor.find()
+   
+    await res.status(201).json({
+      vendors
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
 };
+
 const toggleActiveStatus = async (req, res) => {
   try {
     const vendor = await Vendor.findById(req.params.id);
@@ -353,9 +366,11 @@ const getCountofallCollection = async (req, res) => {
             $gte: start_date,
             $lte: end_date
           },
+          paid:true,
           vendorid: Mongoose.mongo.ObjectId(id)
         }
       },
+    
       {
         $addFields: {
           date: {
@@ -390,9 +405,11 @@ const getCountofallCollection = async (req, res) => {
       Print.aggregate([
         {
           $match: {
-            vendorid: Mongoose.mongo.ObjectId(id)
+            vendorid: Mongoose.mongo.ObjectId(id),
+            paid: true
           }
         },
+       
         {
           $group: {
             _id: "$vendorid",
@@ -436,5 +453,6 @@ export {
   resetPassword,
   editProfile,
   verifyAndREsetPassword,
-  getCountofallCollection
+  getCountofallCollection,
+  allvendors
 };
