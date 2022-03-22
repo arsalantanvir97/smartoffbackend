@@ -15,13 +15,12 @@ import {
   verifyPassword,
   comparePassword,
   generateHash,
-  createOTPToken
+  // createOTPToken
 } from "../queries";
 import Reset from "../models/ResetModel.js";
 import Mongoose from "mongoose";
 import RequestMachine from "../models/RequestMachineModel.js";
 import Branch from "../models/BranchModel.js";
-import OTP from "../models/OTPModel.js";
 // import { nanoid }from "nanoid";
 // import {
 //   CreateGoogleUser,
@@ -849,9 +848,9 @@ const Singup = async (req, res) => {
 };
 
 const forgotPassword = async (req, res) => {
-  const {email, mobile_number, country_code, } = req.body;
+  const {email, } = req.body;
 try {
-  const user = await User.findOne({ mobile_number, country_code });
+  const user = await User.findOne({ email });
   if (!user) {
     console.log("!user");
     return res.status(401).json({
@@ -859,7 +858,7 @@ try {
     });
   } else {
     const status = generateCode();
-    await createOTPToken(mobile_number, country_code, status,email);
+    await createResetToken(email, status);
 
     const html = `<p>You are receiving this because you (or someone else) have requested the reset of the password for your account.
           \n\n Your verification status is ${status}:\n\n
@@ -881,7 +880,7 @@ try {
 const verifyCode = async (req, res) => {
   const { code } = req.body;
   console.log("req.body", req.body);
-  const reset = await OTP.findOne({ code });
+  const reset = await Reset.findOne({ code });
   if (reset)
     return res.status(200).json({ message: "Recovery status Accepted" });
   else {
@@ -893,21 +892,20 @@ const updatePassword = async (req, res) => {
   try {
     console.log("reset");
 
-    const { password, confirm_password, code, mobile_number, country_code ,email} =
+    const { password, confirm_password, code ,email} =
       req.body;
     console.log("req.body", req.body);
     if (!comparePassword(password, confirm_password))
       return res.status(400).json({ message: "Password does not match" });
-    const reset = await OTP.findOne({ mobile_number, code ,email});
-    console.log("reset", reset);
+      const reset = await Reset.findOne({ email, code });
+      console.log("reset", reset);
     if (!reset)
       return res.status(400).json({ message: "Invalid Recovery status" });
     else {
       console.log("resetexist");
-      const updateduser = await User.findOne({ mobile_number, country_code }).populate(
+      const updateduser = await User.findOne({ email }).populate(
         "subscriptionid"
       );
-      console.log('updateduser',updateduser,updateduser.password,password)
       updateduser.password = password;
       await updateduser.save();
       console.log("updateduser", updateduser);
