@@ -5,7 +5,6 @@ const OTPSchema = mongoose.Schema(
     country_code: {
       type: String,
       required: true,
-      unique: true
     },
     email: {
       type: String,
@@ -15,7 +14,6 @@ const OTPSchema = mongoose.Schema(
     mobile_number: {
       type: String,
       required: true,
-      unique: true
     },
     code: {
       type: String,

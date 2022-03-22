@@ -28,7 +28,7 @@ const UserSchema = mongoose.Schema(
     },
     subscription: { type: Object },
     is_recurring:{type:Boolean},
-    mobile_number: { type: String,unique:true },
+    mobile_number: { type: String },
     country_code: { type: String },
     location: {
       type: {
