@@ -67,6 +67,7 @@ const registerUser = async (req, res) => {
       firstName: user.firstName,
       email: user.email,
       lastName: user.lastName,
+      subscription:user.subscription,
       token: generateToken(user._id),
       message: "Successfully created user!"
     });
@@ -452,7 +453,14 @@ const paymentOfSubscription = async (req, res) => {
 
     console.log("paymentOfSubscription");
     await res.status(201).json({
-      message: "Payment made Successfully"
+      _id: user._id,
+      firstName: user.firstName,
+      email: user.email,
+      lastName: user.lastName,
+      userImage: user.userImage,
+      subscription: user.subscription,
+      subscriptionid: user.subscriptionid,
+      token: generateToken(user._id)
     });
   } catch (err) {
     console.log("error", error);

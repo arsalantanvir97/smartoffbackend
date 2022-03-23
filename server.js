@@ -26,6 +26,7 @@ import userguideRoutes from "./routes/userguideRoutes";
 import homepageRoutes from "./routes/homepageRoutes";
 import homeDataRoutes from "./routes/homeDataRoutes";
 import policyterms from "./routes/policytermsRoutes";
+import servicesRoutes from "./routes/servicesRoutes";
 
 import Stripe from "stripe";
 const stripe = Stripe("sk_test_OVw01bpmRN2wBK2ggwaPwC5500SKtEYy9V");
@@ -35,7 +36,7 @@ dotenv.config();
 const PORT = 5051;
 
 // SSL Configuration
-const local = true;
+const local = false;
 let credentials = {};
 
 if (local) {
@@ -143,6 +144,8 @@ app.use("/api/userguide", userguideRoutes);
 app.use("/api/homepage", homepageRoutes);
 app.use("/api/homeDataRoutes", homeDataRoutes);
 app.use("/api/policyterms", policyterms);
+app.use("/api/services", servicesRoutes);
+
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(__dirname + "/uploads"));

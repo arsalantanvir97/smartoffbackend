@@ -1,4 +1,6 @@
 import express from "express";
+import { privacyPolicy, termsConditions } from "../controllers/policytermsController.js";
+import { getServices } from "../controllers/servicesController.js";
 const router = express.Router();
 
 import {
@@ -23,7 +25,8 @@ import {
   SocialLogin,
   updatePassword,
   updateProfile,
-  cancelationOfSubscription
+  cancelationOfSubscription,
+ 
 } from "../controllers/userController.js";
 import { protect } from "../middlewares/authMiddleware";
 
@@ -53,6 +56,9 @@ router.post("/SocialLogin", SocialLogin);
 router.post("/updatePassword", updatePassword);
 router.post("/updateProfile",protect, updateProfile);
 router.post("/cancelationOfSubscription", protect,cancelationOfSubscription);
+router.get("/getServices", getServices);
+router.get("/privacyPolicy", privacyPolicy);
+router.get("/termsConditions", termsConditions);
 
 
 export default router;
