@@ -95,7 +95,7 @@ const printFile = async (req, res) => {
     cvv
   } = req.body;
   console.log("req.body", req.body);
- 
+
   const reqmachine = await RequestMachine.findOne({ _id: requestformachineid });
 
   const setting = await Setting.findOne();
@@ -132,12 +132,9 @@ const printFile = async (req, res) => {
     });
     console.log("print", print);
 
-    
     const printcreated = await print.save();
     console.log("printcreated", printcreated);
     if (printcreated) {
-   
-
       res.status(201).json({
         printcreated
       });

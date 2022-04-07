@@ -21,6 +21,7 @@ import Reset from "../models/ResetModel.js";
 import Mongoose from "mongoose";
 import RequestMachine from "../models/RequestMachineModel.js";
 import Branch from "../models/BranchModel.js";
+import Setting from "../models/SettingsModel.js";
 // import { nanoid }from "nanoid";
 // import {
 //   CreateGoogleUser,
@@ -978,6 +979,21 @@ const updateProfile = async (req, res) => {
     token: generateToken(user._id)
   });
 };
+const dataforprinting = async (req, res) => {
+  try {
+    const requestmachine = await RequestMachine.find().populate(
+      "vendorid branchid"
+    );
+    const setting=await Setting.findOne().select('costforcolor costforblackandwhite')
+    await res.status(201).json({
+      requestmachine,setting
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
 
 export {
   logs,
@@ -1001,5 +1017,6 @@ export {
   updatePassword,
   SocialLogin,
   updateProfile,
-  cancelationOfSubscription
+  cancelationOfSubscription,
+  dataforprinting
 };

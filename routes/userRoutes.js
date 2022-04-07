@@ -26,7 +26,7 @@ import {
   updatePassword,
   updateProfile,
   cancelationOfSubscription,
- 
+  dataforprinting
 } from "../controllers/userController.js";
 import { protect } from "../middlewares/authMiddleware";
 
@@ -59,6 +59,6 @@ router.post("/cancelationOfSubscription", protect,cancelationOfSubscription);
 router.get("/getServices", getServices);
 router.get("/privacyPolicy", privacyPolicy);
 router.get("/termsConditions", termsConditions);
-
+router.get('/dataforprinting',protect,dataforprinting)
 
 export default router;

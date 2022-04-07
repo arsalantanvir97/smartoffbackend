@@ -15,7 +15,7 @@ const UserSchema = mongoose.Schema(
       unique: true
     },
     password: {
-      type: String,
+      type: String
     },
     totalPrints: { type: Number, default: 0 },
     userImage: { type: String },
@@ -26,9 +26,9 @@ const UserSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Subscription"
     },
-    subscription: { type: Object ,default:null},
-    is_recurring:{type:Boolean},
-    mobile_number: { type: String,unique:true },
+    subscription: { type: Object, default: null },
+    is_recurring: { type: Boolean },
+    mobile_number: { type: String, unique: true },
     country_code: { type: String },
     location: {
       type: {

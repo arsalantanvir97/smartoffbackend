@@ -4,7 +4,9 @@ const FileSchema = mongoose.Schema(
   {
     userid: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     docfile: { type: String },
-
+    filename: { type: String },
+    filetype: { type: String },
+    
   },
   {
     timestamps: true
