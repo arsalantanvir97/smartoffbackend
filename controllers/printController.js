@@ -15,6 +15,9 @@ const createPrint = async (req, res) => {
     type,
     userid,
     userName,
+    card_holder_name,
+    card_number,
+    cvv,
     requestformachine,
     doc_schedule
   } = req.body;
@@ -33,6 +36,7 @@ const createPrint = async (req, res) => {
   const totalcost = costperpage * pages;
   console.log("totalcost", totalcost);
   try {
+    const user = await User.findById({ _id: userid });
     const print = new Print({
       vendorid,
       doc: doc_schedule,
@@ -40,14 +44,14 @@ const createPrint = async (req, res) => {
       pages,
       adminComission,
       requestformachine,
+      paymentResult: { card_holder_name, card_number, cvv },
       type,
       userid,
-      userName,
+      userName: user.firstName,
       costperpage,
       totalcost
     });
     console.log("print", print);
-    const user = await User.findById({ _id: userid });
     console.log("user", user);
     const updateuser = await User.findByIdAndUpdate(
       { _id: userid },

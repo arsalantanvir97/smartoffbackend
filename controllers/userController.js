@@ -14,7 +14,7 @@ import {
   createResetToken,
   verifyPassword,
   comparePassword,
-  generateHash,
+  generateHash
   // createOTPToken
 } from "../queries";
 import Reset from "../models/ResetModel.js";
@@ -68,7 +68,7 @@ const registerUser = async (req, res) => {
       firstName: user.firstName,
       email: user.email,
       lastName: user.lastName,
-      subscription:user.subscription,
+      subscription: user.subscription,
       token: generateToken(user._id),
       message: "Successfully created user!"
     });
@@ -93,6 +93,7 @@ const authUser = asyncHandler(async (req, res) => {
       userImage: user.userImage,
       subscription: user.subscription,
       subscriptionid: user.subscriptionid,
+      mobile_number: user.mobile_number,
 
       token: generateToken(user._id)
     });
@@ -183,7 +184,7 @@ const resetPassword = async (req, res) => {
 };
 
 const editProfile = async (req, res) => {
-  const { firstName, lastName, id } = req.body;
+  const { firstName, lastName, id, mobile_number } = req.body;
   console.log("req.body", req.body);
 
   let user_image =
@@ -195,6 +196,7 @@ const editProfile = async (req, res) => {
   const user = await User.findOne({ _id: id }).populate("subscriptionid");
   console.log("user", user);
   user.firstName = firstName ? firstName : user.firstName;
+  user.mobile_number = mobile_number ? mobile_number : user.mobile_number;
   user.lastName = lastName ? lastName : user.lastName;
   user.userImage = user_image ? user_image : user.userImage;
   await user.save();
@@ -203,6 +205,7 @@ const editProfile = async (req, res) => {
     _id: user._id,
     firstName: user.firstName,
     email: user.email,
+    mobile_number: user.mobile_number,
     lastName: user.lastName,
     userImage: user.userImage,
     subscription: user.subscription,
@@ -359,7 +362,7 @@ const getCountofallCollection = async (req, res) => {
             $gte: start_date,
             $lte: end_date
           },
-          paid:true
+          paid: true
         }
       },
       {
@@ -398,7 +401,6 @@ const getCountofallCollection = async (req, res) => {
         Print.aggregate([
           {
             $match: {
-             
               paid: true
             }
           },
@@ -472,7 +474,6 @@ const paymentOfSubscription = async (req, res) => {
 };
 
 const cancelationOfSubscription = async (req, res) => {
- 
   try {
     const user = await User.findById({ _id: req.id });
     console.log("user", user);
@@ -522,7 +523,7 @@ const getUserDetailsandCheckSubscrptionExpiry = async (req, res) => {
 };
 
 const SocialLogin = async (req, res) => {
-  let usersession 
+  let usersession;
   if (req.body.method == "google") {
     try {
       const token = req.body.access_token ? req.body.access_token : "";
@@ -536,13 +537,16 @@ const SocialLogin = async (req, res) => {
           const token = generateToken(user._id);
           usersession = await Session.findOneAndUpdate(
             { user: user._id },
-            { deviceId: req.body.deviceId,deviceType:req.body.device_type, status: true, token: token, },
+            {
+              deviceId: req.body.deviceId,
+              deviceType: req.body.device_type,
+              status: true,
+              token: token
+            },
             { new: true, upsert: true, returnNewDocument: true }
           );
           console.log("googleusersession", usersession);
-         await usersession.save();
-         
-
+          await usersession.save();
 
           return res.status(200).json({
             message: "Log in Successfull",
@@ -580,14 +584,19 @@ const SocialLogin = async (req, res) => {
         await user.save();
 
         const token = generateToken(user._id);
-        
+
         usersession = await Session.findOneAndUpdate(
           { user: user._id },
-          { deviceId: req.body.deviceId,deviceType:req.body.device_type, status: true, token: token, },
+          {
+            deviceId: req.body.deviceId,
+            deviceType: req.body.device_type,
+            status: true,
+            token: token
+          },
           { new: true, upsert: true, returnNewDocument: true }
         );
         console.log("googleusersession", usersession);
-       await usersession.save();
+        await usersession.save();
 
         return res.status(200).json({
           message: "Log in Successfull",
@@ -617,14 +626,19 @@ const SocialLogin = async (req, res) => {
       if (Facebookuser.data) {
         let user = await User.findOne({ email: Facebookuser.data.email });
         if (user) {
-          const token = generateToken(user._id)
+          const token = generateToken(user._id);
           usersession = await Session.findOneAndUpdate(
             { user: user._id },
-            { deviceId: req.body.deviceId,deviceType:req.body.device_type, status: true, token: token, },
+            {
+              deviceId: req.body.deviceId,
+              deviceType: req.body.device_type,
+              status: true,
+              token: token
+            },
             { new: true, upsert: true, returnNewDocument: true }
           );
           console.log("googleusersession", usersession);
-         await usersession.save();
+          await usersession.save();
 
           return res.status(200).json({
             message: "Log in Successfull",
@@ -659,14 +673,19 @@ const SocialLogin = async (req, res) => {
           //   image: req.file.path
         });
         await user.save();
-        const token = await generateToken(user._id)
+        const token = await generateToken(user._id);
         usersession = await Session.findOneAndUpdate(
           { user: user._id },
-          { deviceId: req.body.deviceId,deviceType:req.body.device_type, status: true, token: token, },
+          {
+            deviceId: req.body.deviceId,
+            deviceType: req.body.device_type,
+            status: true,
+            token: token
+          },
           { new: true, upsert: true, returnNewDocument: true }
         );
         console.log("googleusersession", usersession);
-       await usersession.save();
+        await usersession.save();
         return res.status(200).json({
           message: "Log in Successfull",
           user: user,
@@ -687,15 +706,19 @@ const SocialLogin = async (req, res) => {
       let user = await User.findOne({ appleId: apple_user_id });
 
       if (user) {
-        const token = generateToken(user._id)
+        const token = generateToken(user._id);
         usersession = await Session.findOneAndUpdate(
           { user: user._id },
-          { deviceId: req.body.deviceId,deviceType:req.body.device_type, status: true, token: token, },
+          {
+            deviceId: req.body.deviceId,
+            deviceType: req.body.device_type,
+            status: true,
+            token: token
+          },
           { new: true, upsert: true, returnNewDocument: true }
         );
         console.log("googleusersession", usersession);
-       await usersession.save();
-
+        await usersession.save();
 
         return res.status(200).json({
           message: "Log in Successfull",
@@ -728,11 +751,16 @@ const SocialLogin = async (req, res) => {
       const token = await user.generateAuthToken();
       usersession = await Session.findOneAndUpdate(
         { user: user._id },
-        { deviceId: req.body.deviceId,deviceType:req.body.device_type, status: true, token: token, },
+        {
+          deviceId: req.body.deviceId,
+          deviceType: req.body.device_type,
+          status: true,
+          token: token
+        },
         { new: true, upsert: true, returnNewDocument: true }
       );
       console.log("googleusersession", usersession);
-     await usersession.save();
+      await usersession.save();
 
       return res.status(200).json({
         message: "Log in Successfull",
@@ -757,42 +785,41 @@ const SocialLogin = async (req, res) => {
 
 const login = asyncHandler(async (req, res) => {
   console.log("authUser");
-  const { email, password, deviceId,device_type } = req.body;
-try {
-  const user = await User.findOne({ email }).populate("subscriptionid");
-  console.log("user", user);
-  if (user && (await user.matchPassword(password))) {
-    const createdataofusers = await Session.findOneAndUpdate(
-      { user: user._id },
-      { deviceId: deviceId,deviceType:device_type },
-      { new: true, upsert: true, returnNewDocument: true }
-    );
-    console.log("createdataofusers", createdataofusers);
-    const abc = await createdataofusers.save();
-    await res.status(200).json({
-      _id: user._id,
-      firstName: user.firstName,
-      email: user.email,
-      lastName: user.lastName,
-      userImage: user.userImage,
-      subscription: user.subscription,
-      subscriptionid: user.subscriptionid,
-      country_code: user.country_code,
-      mobile_number: user.mobile_number,
-      token: generateToken(user._id)
-    });
-  } else {
-    console.log("error");
-     res.status(201).json({
-      message: "Invalid Email or Password"
+  const { email, password, deviceId, device_type } = req.body;
+  try {
+    const user = await User.findOne({ email }).populate("subscriptionid");
+    console.log("user", user);
+    if (user && (await user.matchPassword(password))) {
+      const createdataofusers = await Session.findOneAndUpdate(
+        { user: user._id },
+        { deviceId: deviceId, deviceType: device_type },
+        { new: true, upsert: true, returnNewDocument: true }
+      );
+      console.log("createdataofusers", createdataofusers);
+      const abc = await createdataofusers.save();
+      await res.status(200).json({
+        _id: user._id,
+        firstName: user.firstName,
+        email: user.email,
+        lastName: user.lastName,
+        userImage: user.userImage,
+        subscription: user.subscription,
+        subscriptionid: user.subscriptionid,
+        country_code: user.country_code,
+        mobile_number: user.mobile_number,
+        token: generateToken(user._id)
+      });
+    } else {
+      console.log("error");
+      res.status(201).json({
+        message: "Invalid Email or Password"
+      });
+    }
+  } catch (error) {
+    res.status(201).json({
+      message: error
     });
   }
-} catch (error) {
-  res.status(201).json({
-    message: error
-  });
-}
-  
 });
 
 const Singup = async (req, res) => {
@@ -857,33 +884,32 @@ const Singup = async (req, res) => {
 };
 
 const forgotPassword = async (req, res) => {
-  const {email, } = req.body;
-try {
-  const user = await User.findOne({ email });
-  if (!user) {
-    console.log("!user");
-    return res.status(401).json({
-      message: "Invalid Mobile Number or Country Code"
-    });
-  } else {
-    const status = generateCode();
-    await createResetToken(email, status);
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      console.log("!user");
+      return res.status(401).json({
+        message: "Invalid Mobile Number or Country Code"
+      });
+    } else {
+      const status = generateCode();
+      await createResetToken(email, status);
 
-    const html = `<p>You are receiving this because you (or someone else) have requested the reset of the password for your account.
+      const html = `<p>You are receiving this because you (or someone else) have requested the reset of the password for your account.
           \n\n Your verification status is ${status}:\n\n
           \n\n If you did not request this, please ignore this email and your password will remain unchanged.           
           </p>`;
-    await generateEmail(email, "Smart Off - Password Reset", html);
-    return res.status(201).json({
-      message:
-        "Recovery status Has Been Emailed To Your Registered Email Address"
-    });
+      await generateEmail(email, "Smart Off - Password Reset", html);
+      return res.status(201).json({
+        message:
+          "Recovery status Has Been Emailed To Your Registered Email Address"
+      });
+    }
+  } catch (error) {
+    console.log("error", error);
+    return res.status(400).json({ message: error.toString() });
   }
-} catch (error) {
-  console.log("error", error);
-  return res.status(400).json({ message: error.toString() });
-}
-  
 };
 
 const verifyCode = async (req, res) => {
@@ -901,13 +927,12 @@ const updatePassword = async (req, res) => {
   try {
     console.log("reset");
 
-    const { password, confirm_password, code ,email} =
-      req.body;
+    const { password, confirm_password, code, email } = req.body;
     console.log("req.body", req.body);
     if (!comparePassword(password, confirm_password))
       return res.status(400).json({ message: "Password does not match" });
-      const reset = await Reset.findOne({ email, code });
-      console.log("reset", reset);
+    const reset = await Reset.findOne({ email, code });
+    console.log("reset", reset);
     if (!reset)
       return res.status(400).json({ message: "Invalid Recovery status" });
     else {
@@ -984,9 +1009,12 @@ const dataforprinting = async (req, res) => {
     const requestmachine = await RequestMachine.find().populate(
       "vendorid branchid"
     );
-    const setting=await Setting.findOne().select('costforcolor costforblackandwhite')
+    const setting = await Setting.findOne().select(
+      "costforcolor costforblackandwhite"
+    );
     await res.status(201).json({
-      requestmachine,setting
+      requestmachine,
+      setting
     });
   } catch (err) {
     res.status(500).json({
