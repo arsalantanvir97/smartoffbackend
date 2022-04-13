@@ -118,11 +118,13 @@ const subscriptionPayment = async (req, res) => {
       now.setDate(now.getDate() + subscriptionn.duration)
     );
 
-    await user.save();
+   const updateduser= await user.save();
 
     console.log("paymentOfSubscription");
     await res.status(201).json({
-      message: "Congratulations! You have successfully subscribed to our package"
+      message: "Congratulations! You have successfully subscribed to our package",
+      user:updateduser
+
     });
   } catch (err) {
     console.log("error", error);
