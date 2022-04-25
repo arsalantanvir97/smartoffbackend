@@ -18,6 +18,7 @@ import {
 } from "../queries";
 import Reset from "../models/ResetModel.js";
 import Mongoose from "mongoose";
+
 const registerVendor = async (req, res) => {
   const {
     firstName,
@@ -173,7 +174,6 @@ const resetPassword = async (req, res) => {
   //   message: "Password Updated",
   // });
 };
-
 const editProfile = async (req, res) => {
   const { firstName, lastName, organizationName, phone, id } = req.body;
   console.log("req.body", req.body);
@@ -206,7 +206,6 @@ const editProfile = async (req, res) => {
     token: generateToken(vendor._id)
   });
 };
-
 const verifyAndREsetPassword = async (req, res) => {
   try {
     console.log("reset");
@@ -252,7 +251,6 @@ const verifyAndREsetPassword = async (req, res) => {
   //   message: "Password Updated",
   // });
 };
-
 const Vendorlogs = async (req, res) => {
   try {
     console.log("req.query.searchString", req.query.searchString);
@@ -300,10 +298,11 @@ const Vendorlogs = async (req, res) => {
       message: err.toString()
     });
   }
-}; const allvendors = async (req, res) => {
+};
+const allvendors = async (req, res) => {
   try {
-    const vendors = await Vendor.find()
-   
+    const vendors = await Vendor.find();
+
     await res.status(201).json({
       vendors
     });
@@ -313,7 +312,6 @@ const Vendorlogs = async (req, res) => {
     });
   }
 };
-
 const toggleActiveStatus = async (req, res) => {
   try {
     const vendor = await Vendor.findById(req.params.id);
@@ -349,7 +347,6 @@ const getVendorDetails = async (req, res) => {
     });
   }
 };
-
 const getCountofallCollection = async (req, res) => {
   try {
     console.log("req.params.id", req.query);
@@ -366,11 +363,11 @@ const getCountofallCollection = async (req, res) => {
             $gte: start_date,
             $lte: end_date
           },
-          paid:true,
+          paid: true,
           vendorid: Mongoose.mongo.ObjectId(id)
         }
       },
-    
+
       {
         $addFields: {
           date: {
@@ -409,7 +406,7 @@ const getCountofallCollection = async (req, res) => {
             paid: true
           }
         },
-       
+
         {
           $group: {
             _id: "$vendorid",

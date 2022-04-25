@@ -146,7 +146,6 @@ app.use("/api/homeDataRoutes", homeDataRoutes);
 app.use("/api/policyterms", policyterms);
 app.use("/api/services", servicesRoutes);
 
-
 const __dirname = path.resolve();
 app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use("/api/download/uploads/:file_name", function (req, res) {
