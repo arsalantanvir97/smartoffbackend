@@ -362,7 +362,6 @@ const getCountofallCollection = async (req, res) => {
             $gte: start_date,
             $lte: end_date
           },
-          paid: true
         }
       },
       {
@@ -399,11 +398,7 @@ const getCountofallCollection = async (req, res) => {
         RequestMachine.count(),
         RequestMachine.find().populate("vendorid branchid"),
         Print.aggregate([
-          {
-            $match: {
-              paid: true
-            }
-          },
+         
           {
             $group: {
               _id: 1,
