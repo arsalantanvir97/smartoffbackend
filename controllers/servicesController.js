@@ -78,4 +78,15 @@ const updateServices = async (req, res) => {
   }
 };
 
-export { createServices, singleService, getServices, updateServices };
+const deleteService = async (req, res) => {
+  try {
+    await Services.findByIdAndRemove(req.params.id);
+    return res.status(201).json({ message: "Service Deleted" });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
+export { createServices, singleService, getServices, updateServices ,deleteService};
