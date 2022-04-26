@@ -6,6 +6,10 @@ const ServicesSchema = mongoose.Schema(
     details: {
       type: String,
       required: true
+    },
+    image: {
+      type: String,
+      required: true
     }
   },
   {

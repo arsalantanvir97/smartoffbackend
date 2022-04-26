@@ -30,19 +30,26 @@ const createFolder = async (req, res) => {
   }
 };
 const createaFolder = async (req, res) => {
-  const { userid, folderName,filename } = req.body;
+  const { userid, folderName, filename } = req.body;
   console.log("req.body", req.body);
   let doc_schedule =
     req.files &&
     req.files.doc_schedule &&
     req.files.doc_schedule[0] &&
     req.files.doc_schedule[0].path;
-    let filetype=req.files.doc_schedule[0].mimetype;
 
+  let filetype = "";
+  if (doc_schedule) {
+    console.log("insideeeeee");
+    filetype = req.files.doc_schedule[0].mimetype;
+  }
+  console.log("filetype", filetype);
   try {
     const folder = new Folder({
       userid,
-      fileArr: [{file:doc_schedule,filename:filename,filetype:filetype}],
+      fileArr: filetype
+        ? [{ file: doc_schedule, filename: filename, filetype: filetype }]
+        : [],
       folderName
     });
     const foldercreated = await folder.save();
@@ -166,7 +173,7 @@ const uploadFilesinFolder = async (req, res) => {
   }
 };
 const uploadFilesinaFolder = async (req, res) => {
-  const { folderid,filename } = req.body;
+  const { folderid, filename } = req.body;
   console.log("req.body folderid", req.body);
 
   try {
@@ -175,10 +182,13 @@ const uploadFilesinaFolder = async (req, res) => {
       req.files.doc_schedule &&
       req.files.doc_schedule[0] &&
       req.files.doc_schedule[0].path;
-      let filetype=req.files.doc_schedule[0].mimetype;
+    let filetype = req.files.doc_schedule[0].mimetype;
     console.log("doc_schedule", doc_schedule);
     const folder = await Folder.findOne({ _id: folderid });
-    folder.fileArr = [...folder.fileArr,  {file:doc_schedule,filename:filename,filetype:filetype}];
+    folder.fileArr = [
+      ...folder.fileArr,
+      { file: doc_schedule, filename: filename, filetype: filetype }
+    ];
     const updatedfolder = await folder.save();
     res.status(201).json({
       updatedfolder
@@ -268,7 +278,7 @@ const searchbyaFileName = async (req, res) => {
   try {
     const file = await File.find({
       userid: userid,
-      filename: { $regex: searchString }
+      filename: { $regex: searchString, $options: "i" }
     });
 
     const folder = await Folder.find({ userid: userid });
@@ -285,7 +295,6 @@ const searchbyaFileName = async (req, res) => {
     });
   }
 };
-
 
 const searchFilesinFolder = async (req, res) => {
   const { searchString, folderid } = req.body;
@@ -306,13 +315,14 @@ const searchFilesinFolder = async (req, res) => {
     });
   }
 };
+
 const searchFilesinaFolder = async (req, res) => {
   const { searchString, folderid } = req.body;
   console.log("req.body index", req.body);
   try {
     const folder = await Folder.findOne({
       _id: folderid,
-      'fileArr.filename': { $regex: searchString }
+      "fileArr.filename": { $regex: searchString }
     });
     console.log("folder", folder);
 

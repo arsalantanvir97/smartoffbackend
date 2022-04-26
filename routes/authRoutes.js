@@ -9,11 +9,15 @@ import {
   editProfile,
   registerUser,
   registerVendor,
-  verifyAndREsetPassword
+  verifyAndREsetPassword,userVerifyEmail,userVerifyCode
 } from "../controllers/authController.js";
 import { protect } from "../middlewares/authMiddleware";
 
 router.post("/adminRegister", registerAdmin);
+router.post("/userVerifyEmail", userVerifyEmail);
+router.post("/userVerifyCode", userVerifyCode);
+
+
 router.post("/adminAuth", authAdmin);
 router.post("/adminRecoverPassword", recoverPassword);
 router.post("/adminverifyRecoverCode", verifyRecoverCode);

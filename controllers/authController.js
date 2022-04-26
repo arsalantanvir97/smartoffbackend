@@ -14,7 +14,9 @@ import {
   verifyPassword,
   comparePassword,
   generateHash,
+  createVerifyToken,
 } from "../queries";
+import Verify from "../models/VerifyModel.js";
 
 const registerAdmin = asyncHandler(async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -72,6 +74,26 @@ const authAdmin = asyncHandler(async (req, res) => {
   }
 });
 
+const userVerifyEmail = asyncHandler(async (req, res) => {
+  console.log("recoverPassword");
+  const { email } = req.body;
+  console.log("req.body", req.body);
+ 
+    const status = generateCode();
+    await createVerifyToken(email, status);
+
+    const html = `<p>You are receiving this because you (or someone else) have requested to register on our platform as a user.
+        \n\n Your verification status is ${status}:\n\n
+        \n\n If you did not request this, please ignore this email and your password will remain unchanged.           
+        </p>`;
+    await generateEmail(email, "SmartOff Print- Verify Email", html);
+    return res.status(201).json({
+      message:
+        "Recovery status Has Been Emailed To Your Registered Email Address",
+    });
+ 
+});
+
 const recoverPassword = asyncHandler(async (req, res) => {
   console.log("recoverPassword");
   const { email } = req.body;
@@ -97,6 +119,21 @@ const recoverPassword = asyncHandler(async (req, res) => {
     });
   }
 });
+
+const userVerifyCode = async (req, res) => {
+  const { code, email } = req.body;
+  console.log("req.body", req.body);
+  const reset = await Verify.findOne({ email, code });
+
+  if (reset)
+    return res.status(200).json({ message: "Recovery status Accepted" });
+  else {
+    return res.status(400).json({ message: "Invalid Code" });
+  }
+  // console.log("reset", reset);
+};
+
+
 const verifyRecoverCode = async (req, res) => {
   const { code, email } = req.body;
   console.log("req.body", req.body);
@@ -331,4 +368,6 @@ export {
   registerUser,
   verifyAndREsetPassword,
   registerVendor,
+  userVerifyEmail,
+  userVerifyCode
 };

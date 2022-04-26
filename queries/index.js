@@ -1,10 +1,22 @@
 import Reset from '../models/ResetModel'
+import Verify from '../models/VerifyModel'
 
 import bcrypt from 'bcryptjs'
 const createResetToken = async (email, code) => {
     const token = await Reset.findOne({ email });
     if (token) await token.remove();
     const newToken = new Reset({
+      email,
+      code,
+    });
+    console.log('newToken',newToken)
+    await newToken.save();
+  };
+
+  const createVerifyToken = async (email, code) => {
+    const token = await Verify.findOne({ email });
+    if (token) await token.remove();
+    const newToken = new Verify({
       email,
       code,
     });
@@ -20,4 +32,4 @@ const createResetToken = async (email, code) => {
   const generateHash = async (string) => await bcrypt.hash(string, 12);
 
 
-  export{createResetToken,verifyPassword,comparePassword,generateHash}
+  export{createResetToken,verifyPassword,comparePassword,generateHash,createVerifyToken}
