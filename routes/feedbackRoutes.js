@@ -6,7 +6,7 @@ import {
 } from "../controllers/feedbackController";
 import { protect } from "../middlewares/authMiddleware";
 
-router.post("/create-feedback",protect,createFeedback);
+router.post("/create-feedback",createFeedback);
 router.get("/Feedbacklogs",protect,Feedbacklogs);
 router.get("/feedback-details/:id",protect,getFeedbackDetails);
 
