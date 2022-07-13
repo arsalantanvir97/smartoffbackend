@@ -85,18 +85,25 @@ const authUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email }).populate("subscriptionid");
   console.log("user", user);
   if (user && (await user.matchPassword(password))) {
-    await res.status(200).json({
-      _id: user._id,
-      firstName: user.firstName,
-      email: user.email,
-      lastName: user.lastName,
-      userImage: user.userImage,
-      subscription: user.subscription,
-      subscriptionid: user.subscriptionid,
-      mobile_number: user.mobile_number,
+    if (user.status == false) {
+      console.log("hiii");
+      res.status(403).json({
+        message: "Admin blocked you"
+      });
+    } else {
+      await res.status(200).json({
+        _id: user._id,
+        firstName: user.firstName,
+        email: user.email,
+        lastName: user.lastName,
+        userImage: user.userImage,
+        subscription: user.subscription,
+        subscriptionid: user.subscriptionid,
+        mobile_number: user.mobile_number,
 
-      token: generateToken(user._id)
-    });
+        token: generateToken(user._id)
+      });
+    }
   } else {
     console.log("error");
     return res.status(201).json({
@@ -361,7 +368,7 @@ const getCountofallCollection = async (req, res) => {
           createdAt: {
             $gte: start_date,
             $lte: end_date
-          },
+          }
         }
       },
       {
@@ -398,7 +405,6 @@ const getCountofallCollection = async (req, res) => {
         RequestMachine.count(),
         RequestMachine.find().populate("vendorid branchid"),
         Print.aggregate([
-         
           {
             $group: {
               _id: 1,
@@ -785,25 +791,43 @@ const login = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email }).populate("subscriptionid");
     console.log("user", user);
     if (user && (await user.matchPassword(password))) {
-      const createdataofusers = await Session.findOneAndUpdate(
-        { user: user._id },
-        { deviceId: deviceId, deviceType: device_type },
-        { new: true, upsert: true, returnNewDocument: true }
-      );
-      console.log("createdataofusers", createdataofusers);
-      const abc = await createdataofusers.save();
-      await res.status(200).json({
-        _id: user._id,
-        firstName: user.firstName,
-        email: user.email,
-        lastName: user.lastName,
-        userImage: user.userImage,
-        subscription: user.subscription,
-        subscriptionid: user.subscriptionid,
-        country_code: user.country_code,
-        mobile_number: user.mobile_number,
-        token: generateToken(user._id)
-      });
+      if (user.status == false) {
+        console.log("hiii");
+        res.status(403).json({
+          message: "Admin blocked you"
+        });
+      } else {
+        if(!user.loginVerify){
+          const status = generateCode();
+          await createResetToken(email, status);
+    
+          const html = `<p>Your login verification code is ${status}</p>`;
+          await generateEmail(email, "Smart Off - Login Verify", html);
+    
+          res.status(405).json({
+            message: "Verification needed"
+          });
+        }else{
+        const createdataofusers = await Session.findOneAndUpdate(
+          { user: user._id },
+          { deviceId: deviceId, deviceType: device_type },
+          { new: true, upsert: true, returnNewDocument: true }
+        );
+        console.log("createdataofusers", createdataofusers);
+        const abc = await createdataofusers.save();
+        await res.status(200).json({
+          _id: user._id,
+          firstName: user.firstName,
+          email: user.email,
+          lastName: user.lastName,
+          userImage: user.userImage,
+          subscription: user.subscription,
+          subscriptionid: user.subscriptionid,
+          country_code: user.country_code,
+          mobile_number: user.mobile_number,
+          token: generateToken(user._id)
+        });
+      }}
     } else {
       console.log("error");
       res.status(201).json({
@@ -885,7 +909,7 @@ const forgotPassword = async (req, res) => {
     if (!user) {
       console.log("!user");
       return res.status(401).json({
-        message: "Invalid Mobile Number or Country Code"
+        message: "Invalid Email or Password"
       });
     } else {
       const status = generateCode();
@@ -917,7 +941,31 @@ const verifyCode = async (req, res) => {
     return res.status(400).json({ message: "Invalid Code" });
   }
 };
-
+const loginVerifyCode = async (req, res) => {
+  const { code } = req.body;
+  console.log("req.body", req.body);
+  const reset = await Reset.findOne({ code:code });
+  if (reset) {
+    const user = await User.findOne({ email: reset.email });
+    user.loginVerify = true;
+    await user.save();
+    await res.status(200).json({
+      _id: user._id,
+      firstName: user.firstName,
+      email: user.email,
+      lastName: user.lastName,
+      userImage: user.userImage,
+      subscription: user.subscription,
+      loginVerify: user.loginVerify,
+      subscriptionid: user.subscriptionid,
+      country_code: user.country_code,
+      mobile_number: user.mobile_number,
+      token: generateToken(user._id)
+    });}
+  else {
+    return res.status(400).json({ message: "Invalid Code" });
+  }
+};
 const updatePassword = async (req, res) => {
   try {
     console.log("reset");
@@ -1041,5 +1089,6 @@ export {
   SocialLogin,
   updateProfile,
   cancelationOfSubscription,
-  dataforprinting
+  dataforprinting,
+  loginVerifyCode
 };

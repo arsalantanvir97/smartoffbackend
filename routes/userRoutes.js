@@ -26,7 +26,8 @@ import {
   updatePassword,
   updateProfile,
   cancelationOfSubscription,
-  dataforprinting
+  dataforprinting,
+  loginVerifyCode
 } from "../controllers/userController.js";
 import { protect } from "../middlewares/authMiddleware";
 
@@ -60,5 +61,7 @@ router.get("/getServices", getServices);
 router.get("/privacyPolicy", privacyPolicy);
 router.get("/termsConditions", termsConditions);
 router.get('/dataforprinting',protect,dataforprinting)
+router.post('/loginVerifyCode',loginVerifyCode)
+
 
 export default router;

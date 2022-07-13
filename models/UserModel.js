@@ -22,6 +22,8 @@ const UserSchema = mongoose.Schema(
     expiryDate: { type: Date },
     paymentResult: { type: Object },
     status: { type: Boolean, default: true },
+    loginVerify: { type: Boolean, default: false },
+
     subscriptionid: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Subscription"

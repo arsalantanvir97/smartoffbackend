@@ -81,6 +81,15 @@ const authVendor = asyncHandler(async (req, res) => {
 
   const vendor = await Vendor.findOne({ email });
   if (vendor && (await vendor.matchPassword(password))) {
+    if (
+      vendor.status == false
+     
+    ) {
+      console.log("hiii");
+      res.status(403).json({
+        message: "Admin blocked you"
+      });
+    } else {
     await res.status(200).json({
       _id: vendor._id,
       firstName: vendor.firstName,
@@ -91,6 +100,7 @@ const authVendor = asyncHandler(async (req, res) => {
       organizationName: vendor.organizationName,
       token: generateToken(vendor._id)
     });
+  }
   } else {
     console.log("error");
     return res.status(201).json({
