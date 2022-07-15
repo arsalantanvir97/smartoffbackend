@@ -103,7 +103,7 @@ const authVendor = asyncHandler(async (req, res) => {
   }
   } else {
     console.log("error");
-    return res.status(201).json({
+    return res.status(401).json({
       message: "Invalid Email or Password"
     });
   }

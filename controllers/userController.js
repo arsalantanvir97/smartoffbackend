@@ -106,7 +106,7 @@ const authUser = asyncHandler(async (req, res) => {
     }
   } else {
     console.log("error");
-    return res.status(201).json({
+    return res.status(401).json({
       message: "Invalid Email or Password"
     });
   }
@@ -830,7 +830,7 @@ const login = asyncHandler(async (req, res) => {
       }}
     } else {
       console.log("error");
-      res.status(201).json({
+      res.status(401).json({
         message: "Invalid Email or Password"
       });
     }
