@@ -1066,7 +1066,22 @@ const dataforprinting = async (req, res) => {
   }
 };
 
+const deleteuser = async (req, res) => {
+  try {
+    await User.findByIdAndRemove(req.id);
+    return res.status(201).json({ message: "User Deleted" });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
+
+
+
 export {
+  deleteuser,
   logs,
   toggleActiveStatus,
   getUserDetails,
