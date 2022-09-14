@@ -62,7 +62,7 @@ const getSingleSubscription = async (req, res) => {
 };
 
 const updateSubscription = async (req, res) => {
-  const { id, packagename, duration, cost, status ,Features} = req.body;
+  const { id, packagename, duration, cost, status, Features } = req.body;
   console.log("req.body", req.body);
   const subscription = await Subscription.findByIdAndUpdate(
     { _id: id },
@@ -103,28 +103,36 @@ const subscriptionPayment = async (req, res) => {
     card_number,
     cvv,
     userid,
+    zip_code,
+    address,
     is_recurring
   } = req.body;
   try {
     var now = new Date();
     const user = await User.findById({ _id: userid });
-    const subscriptionn=await Subscription.findOne({_id:subscription_id})
+    const subscriptionn = await Subscription.findOne({ _id: subscription_id });
     console.log("user", user);
     user.subscriptionid = subscription_id;
     user.subscription = subscriptionn;
-    user.is_recurring=is_recurring
-    user.paymentResult={card_holder_name,card_number,cvv}
+    user.is_recurring = is_recurring;
+    user.paymentResult = {
+      card_holder_name,
+      card_number,
+      cvv,
+      zip_code,
+      address
+    };
     user.expiryDate = new Date(
       now.setDate(now.getDate() + subscriptionn.duration)
     );
 
-   const updateduser= await user.save();
+    const updateduser = await user.save();
 
     console.log("paymentOfSubscription");
     await res.status(201).json({
-      message: "Congratulations! You have successfully subscribed to our package",
-      user:updateduser
-
+      message:
+        "Congratulations! You have successfully subscribed to our package",
+      user: updateduser
     });
   } catch (err) {
     console.log("error", error);

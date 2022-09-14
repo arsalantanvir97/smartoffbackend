@@ -17,6 +17,8 @@ const createPrint = async (req, res) => {
     userName,
     card_holder_name,
     card_number,
+    zip_code,
+    address,
     cvv,
     requestformachine,
     doc_schedule
@@ -44,7 +46,7 @@ const createPrint = async (req, res) => {
       pages,
       adminComission,
       requestformachine,
-      paymentResult: { card_holder_name, card_number, cvv },
+      paymentResult: { card_holder_name, card_number, cvv, zip_code, address },
       type,
       userid,
       userName: user.firstName,

@@ -149,7 +149,7 @@ const folderDetails = async (req, res) => {
   }
 };
 const uploadFilesinFolder = async (req, res) => {
-  const { folderid } = req.body;
+  const { folderid, filename } = req.body;
   console.log("req.body folderid", req.body);
 
   try {
@@ -158,10 +158,14 @@ const uploadFilesinFolder = async (req, res) => {
       req.files.doc_schedule &&
       req.files.doc_schedule[0] &&
       req.files.doc_schedule[0].path;
+    let filetype = req.files.doc_schedule[0].mimetype;
     console.log("doc_schedule", doc_schedule);
+
     const folder = await Folder.findOne({ _id: folderid });
-    console.log("folder", folder, folder.fileArr);
-    folder.fileArr = [...folder.fileArr, doc_schedule];
+    folder.fileArr = [
+      ...folder.fileArr,
+      { file: doc_schedule, filename: filename, filetype: filetype }
+    ];
     const updatedfolder = await folder.save();
     res.status(201).json({
       updatedfolder
