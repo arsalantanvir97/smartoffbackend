@@ -335,11 +335,18 @@ const updatetermsConditions = async (req, res) => {
   const { text } = req.body;
 
   try {
-    const termscondition = await TermsCondition.findOne();
-    termscondition.details = text;
-    const updatedtermscondition = await termscondition.save();
+   
+    const termscondition = await TermsCondition.findOneAndUpdate(
+      {},
+      {
+        details:text
+      },
+      { new: true, upsert: true, returnNewDocument: true }
+    );
+    
+    await termscondition.save();
     res.status(201).json({
-      updatedtermscondition
+      updatedtermscondition:termscondition
     });
   } catch (err) {
     res.status(500).json({

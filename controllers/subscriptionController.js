@@ -141,10 +141,21 @@ const subscriptionPayment = async (req, res) => {
     });
   }
 };
+const deleteSubscription = async (req, res) => {
+  try {
+    await Subscription.findByIdAndRemove(req.params.id);
+    return res.status(201).json({ message: "Subscription Deleted" });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
 export {
   createSubscription,
   allOfSubscription,
   getSingleSubscription,
   updateSubscription,
-  subscriptionPayment
+  subscriptionPayment,
+  deleteSubscription
 };

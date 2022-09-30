@@ -130,9 +130,10 @@ const vendoradmanagementlogs = async (req, res) => {
           $lte: moment.utc(new Date(to)).endOf("day")
         }
       };
-console.log(req.query.vendorid)
+    console.log(req.query.vendorid);
     const admanagement = await AdmanagementModel.paginate(
-      {  vendorid: Mongoose.mongo.ObjectId(req.query.vendorid),
+      {
+        vendorid: Mongoose.mongo.ObjectId(req.query.vendorid),
         ...searchParam,
         ...status_filter,
         ...dateFilter
@@ -178,9 +179,10 @@ const setCostforAd = async (req, res) => {
       {},
       {
         cost
-      }
+      },
+      { new: true, upsert: true, returnNewDocument: true }
     );
-    const costforAddrcreated = await costforAdd.save();
+    await costforAdd.save();
 
     await res.status(201).json({
       message: "Cost set for Ad"
@@ -246,8 +248,8 @@ const paymentofAd = async (req, res) => {
     const admanagement = await AdmanagementModel.findOne({ _id: id });
     admanagement.paid = true;
     admanagement.paymentDetails = paymentdetials;
-    console.log('admanagement',admanagement)
-    await admanagement.save()
+    console.log("admanagement", admanagement);
+    await admanagement.save();
     await res.status(201).json({
       admanagement
     });
@@ -262,10 +264,10 @@ const updatestatus = async (req, res) => {
 
   try {
     const admanagement = await AdmanagementModel.findOne({ _id: id });
-  
-    admanagement.status = 'Pending';
-    console.log('admanagement',admanagement)
-    await admanagement.save()
+
+    admanagement.status = "Pending";
+    console.log("admanagement", admanagement);
+    await admanagement.save();
     await res.status(201).json({
       admanagement
     });
@@ -276,10 +278,9 @@ const updatestatus = async (req, res) => {
   }
 };
 const getAdManagementCost = async (req, res) => {
-
   try {
-    const admanagement = await AdManagementCostModel.findOne( );
-  
+    const admanagement = await AdManagementCostModel.findOne();
+
     await res.status(201).json({
       admanagement
     });
@@ -289,7 +290,6 @@ const getAdManagementCost = async (req, res) => {
     });
   }
 };
-
 
 export {
   createAdmanagement,
