@@ -2,11 +2,13 @@ import Setting from "../models/SettingsModel.js";
 import CreateNotification from '../utills/notification.js'
 
 const createSetting  = async (req, res) => {
-    const { costforcolor,costforblackandwhite,comissonsetting } = req.body;
+    const { costforcolor,costforblackandwhite,comissonsetting,duplexcostforblackandwhite,
+      duplexcostforcolor } = req.body;
 console.log('req.body',req.body)
     try {
       const setting =new Setting ({
-        costforcolor,costforblackandwhite,comissonsetting}
+        costforcolor,costforblackandwhite,comissonsetting,duplexcostforblackandwhite,
+        duplexcostforcolor}
       )
       console.log('setting',setting)
     //   const feedbackcreated = await Feedback.create(
@@ -44,13 +46,15 @@ console.log('req.body',req.body)
   const updateSetting = (async (req, res) => {
     const {
         id,
-    
+        duplexcostforblackandwhite,
+        duplexcostforcolor,
         costforblackandwhite,
         costforcolor,
         comissonsetting,
     } = req.body
   console.log('req.body',req.body)
-    const setting = await Setting.findByIdAndUpdate({_id:id}, { costforblackandwhite: costforblackandwhite, costforcolor: costforcolor,comissonsetting:comissonsetting }, { new: true });
+    const setting = await Setting.findByIdAndUpdate({_id:id}, {duplexcostforblackandwhite,
+      duplexcostforcolor, costforblackandwhite: costforblackandwhite, costforcolor: costforcolor,comissonsetting:comissonsetting }, { new: true });
  
     if (setting) {
       const notification = {

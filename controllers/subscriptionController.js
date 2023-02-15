@@ -4,7 +4,10 @@ import CreateNotification from "../utills/notification.js";
 import User from "../models/UserModel.js";
 
 const createSubscription = async (req, res) => {
-  const { packagename, duration, amount, Features, status } = req.body;
+  const { packagename, duration, amount, Features, status, noofpagesscan,
+    storagememory,
+    noofpagesprint,
+    internethours } = req.body;
   console.log("req.bodycreateSubscription", req.body);
   try {
     const subscription = new Subscription({
@@ -12,7 +15,10 @@ const createSubscription = async (req, res) => {
       duration,
       amount,
       Features,
-      status
+      status, noofpagesscan,
+      storagememory,
+      noofpagesprint,
+      internethours
     });
     console.log("subscription", subscription);
     //   const feedbackcreated = await Feedback.create(
@@ -62,16 +68,23 @@ const getSingleSubscription = async (req, res) => {
 };
 
 const updateSubscription = async (req, res) => {
-  const { id, packagename, duration, cost, status, Features } = req.body;
+  const { id, packagename, duration, cost, status, Features,noofpagesscan,
+    storagememory,
+    noofpagesprint,
+    internethours  } = req.body;
   console.log("req.body", req.body);
   const subscription = await Subscription.findByIdAndUpdate(
     { _id: id },
     {
-      packagename: packagename,
+      packagename,
       Features,
-      duration: duration,
+      duration,
       amount: cost,
-      status: status
+      status,
+      noofpagesscan,
+    storagememory,
+    noofpagesprint,
+    internethours 
     },
     { new: true }
   );
