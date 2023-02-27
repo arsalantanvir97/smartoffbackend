@@ -2,6 +2,7 @@ import Subscription from "../models/SubscriptionModel.js";
 import moment from "moment";
 import CreateNotification from "../utills/notification.js";
 import User from "../models/UserModel.js";
+import VendorSubscription from "../models/VendorSubscriptionModel.js";
 
 const createSubscription = async (req, res) => {
   const { packagename, duration, amount, Features, status, noofpagesscan,
@@ -38,9 +39,47 @@ const createSubscription = async (req, res) => {
     });
   }
 };
+const createVendorSubscription = async (req, res) => {
+
+  try {
+    const subscription = new VendorSubscription(req.body);
+    console.log("subscription", subscription);
+    //   const feedbackcreated = await Feedback.create(
+    //     feedback
+    //   );
+    //   console.log('feedbackcreated',feedbackcreated)
+    const allOfSubscriptions = await subscription.save();
+    console.log("allOfSubscriptions", allOfSubscriptions);
+    if (allOfSubscriptions) {
+      res.status(201).json({
+        allOfSubscriptions
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
 const allOfSubscription = async (req, res) => {
   try {
     const getAllSubscriptions = await Subscription.find();
+    console.log("getAllSubscriptions", getAllSubscriptions);
+    if (getAllSubscriptions) {
+      res.status(201).json({
+        getAllSubscriptions
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+const allvendorsubscription = async (req, res) => {
+  try {
+    const getAllSubscriptions = await VendorSubscription.find();
     console.log("getAllSubscriptions", getAllSubscriptions);
     if (getAllSubscriptions) {
       res.status(201).json({
@@ -164,11 +203,25 @@ const deleteSubscription = async (req, res) => {
     });
   }
 };
+const deleteVendorSubscription = async (req, res) => {
+  try {
+    await VendorSubscription.findByIdAndRemove(req.params.id);
+    return res.status(201).json({ message: "Subscription Deleted" });
+  } catch (err) {
+    res.status(500).json({
+      message: err.toString()
+    });
+  }
+};
+
 export {
   createSubscription,
   allOfSubscription,
   getSingleSubscription,
   updateSubscription,
   subscriptionPayment,
-  deleteSubscription
+  deleteSubscription,
+  createVendorSubscription,
+  allvendorsubscription,
+  deleteVendorSubscription
 };

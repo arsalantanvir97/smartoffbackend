@@ -13,13 +13,13 @@ const createAdmanagement = async (req, res) => {
     req.files.ad_video[0] &&
     req.files.ad_video[0].path;
   try {
-    const costforAdd = await AdManagementCostModel.findOne();
+    // const costforAdd = await AdManagementCostModel.findOne();
     const admanagement = new AdmanagementModel({
       vendorid,
       link,
       message,
       videoUri,
-      cost: costforAdd.cost
+      // cost: costforAdd.cost
     });
     console.log("feedback", admanagement);
     //   const feedbackcreated = await Feedback.create(
@@ -242,12 +242,13 @@ const deleteAd = async (req, res) => {
   }
 };
 const paymentofAd = async (req, res) => {
-  const { id, paymentdetials } = req.body;
+  const { id, paymentdetials,subid } = req.body;
 
   try {
     const admanagement = await AdmanagementModel.findOne({ _id: id });
     admanagement.paid = true;
     admanagement.paymentDetails = paymentdetials;
+    admanagement.subid=subid
     console.log("admanagement", admanagement);
     await admanagement.save();
     await res.status(201).json({

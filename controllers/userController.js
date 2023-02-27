@@ -34,11 +34,11 @@ const registerUser = async (req, res) => {
   const { firstName, confirmpassword, email, lastName, password } = req.body;
 
   if (!comparePassword(password, confirmpassword))
-    return res.status(401).json({ error: "Password does not match" });
+    return res.status(203).json({ error: "Password does not match" });
   const UserExists = await User.findOne({ email });
 
   if (UserExists) {
-    return res.status(401).json({
+    return res.status(203).json({
       error: "User already exist"
     });
   }

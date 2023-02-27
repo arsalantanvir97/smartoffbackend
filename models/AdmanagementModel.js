@@ -19,6 +19,10 @@ paymentDetails:{type:Object},
       type: mongoose.Schema.Types.ObjectId,
       ref: "Vendor"
     },
+    subid: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "VendorSubscription"
+    },
     createdAt: { type: Date, expires: '2m', default: Date.now }
 
   },
